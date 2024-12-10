@@ -1,0 +1,10 @@
+build
+dist
+/src/media
+node_modules
+app/src/node_modules
+.DS_Store
+.env
+*.log
+*.lock
+.idea
