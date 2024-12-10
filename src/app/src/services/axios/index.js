@@ -6,9 +6,9 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = 'a1b2c3d4e5f6789abc0d1234567890abc';
     if (accessToken) {
-      config.headers["Authorization"] = `JWT ${accessToken}`;
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     return config;
   },

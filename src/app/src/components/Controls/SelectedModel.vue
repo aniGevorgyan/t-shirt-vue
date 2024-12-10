@@ -1,23 +1,4 @@
 <template>
-  <div class="q-pb-md q-px-2">
-    <q-btn
-      @click="setCatalogModalOpened(true)"
-      no-caps
-      color="white"
-      icon="shopping_bag"
-      text-color="black"
-      :label="$t('label.catalog')"
-      class="q-mr-sm"
-    />
-    <q-btn
-      @click="makeCustomModel()"
-      no-caps
-      color="primary"
-      icon="add"
-      :label="$t('label.createOwn')"
-    />
-  </div>
-
   <q-card class="q-mx-2" v-if="selectedModel">
     <q-card-section>
       <div class="text-h6">{{ selectedModel.title }}</div>
@@ -100,79 +81,6 @@
         />
       </div>
     </q-card-section>
-
-    <q-dialog v-model="orderModal" :persistent="loading">
-      <q-card style="min-width: 300px">
-        <q-card-section class="row items-center q-pb-md">
-          <div class="text-h6">
-            {{ $t("label.order") }}
-          </div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section class="q-py-none">
-          <q-input
-            v-model="phone"
-            mask="+7 (###) ###-##-##"
-            :label="$t('label.phone')"
-            ref="phoneInput"
-            fill-mask
-            filled
-            lazy-rules
-            :disable="loading"
-            :rules="[(val) => isValidPhone(val) || $t('text.error.emptyPhone')]"
-          />
-          <q-input
-            v-model="email"
-            type="email"
-            :label="$t('label.email')"
-            ref="emailInput"
-            fill-mask
-            filled
-            lazy-rules
-            :disable="loading"
-            :rules="[
-              (val) => validateEmail(val) || $t('text.error.invalidEmail'),
-            ]"
-          />
-          <span v-show="loading">
-            {{ $t("text.orderBeingProcessed") }}
-            {{ $t("text.canTakeSometime") }}
-          </span>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn
-            :label="$t('label.send')"
-            color="primary"
-            @click="createOrder"
-            :disabled="loading"
-            :loading="loading"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="orderCreatedModal">
-      <q-card style="min-width: 300px">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">
-            {{ $t("text.applicationAccepted") }}
-          </div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section class="q-py-lg text-center">
-          <div class="q-mb-lg">
-            <q-btn round color="secondary" icon="done" />
-          </div>
-          <span class="text-body1">
-            {{ $t("text.thanksApplicationAccepted") }}
-            <br />
-            {{ $t("text.weWillContactYou") }}
-          </span>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
   </q-card>
 </template>
 
@@ -216,19 +124,8 @@ export default {
   methods: {
     ...mapMutations("product", ["setSelectedModelColor"]),
     ...mapMutations("app", [
-      "setCatalogModalOpened",
-      "setAuthModalOpened",
-      "setCustomProductModalOpened",
     ]),
     ...mapActions("order", ["calculatePrice"]),
-
-    isValidPhone(value) {
-      return value.match(/[0-9]/g)?.length == 11;
-    },
-
-    validateEmail(email) {
-      return /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email);
-    },
 
     canOrder() {
       return (
@@ -244,14 +141,6 @@ export default {
         html += `<b>${size.toUpperCase()}:</b> ${this.sizes[size]}<br/>`;
       }
       return html;
-    },
-
-    async makeCustomModel() {
-      if (this.user) {
-        this.setCustomProductModalOpened(true);
-      } else {
-        this.setAuthModalOpened(true);
-      }
     },
 
     async createOrder() {

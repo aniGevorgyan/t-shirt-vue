@@ -20,7 +20,6 @@
       ref="fileInput"
       type="file"
       @change="uploadImage"
-      accept="image/*"
       class="hidden"
     />
   </div>
@@ -82,7 +81,7 @@ export default {
       this.loadingLayer = true;
 
       let data = new FormData();
-      data.append("file", file);
+      data.append("file_preview", file);
 
       let image = await MediaService.upload(data);
       if (image) {

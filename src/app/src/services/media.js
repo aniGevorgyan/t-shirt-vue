@@ -5,10 +5,8 @@ import { t } from "../locales";
 const MediaService = {
   async upload(data) {
     try {
-      let result = await axios.post("media", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      return result.data.doc;
+      let result = await axios.post("https://demo.yansprint.com/api/file-preview", data);
+      return result.data;
     } catch (e) {
       Notify.create({ type: "error", message: t("text.error.cantUploadFile") });
       return false;

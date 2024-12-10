@@ -1,60 +1,5 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-<!--    <q-header elevated class="glossy">-->
-<!--      <q-toolbar class="bg-primary text-white">-->
-<!--        <q-toolbar-title> Print Designer</q-toolbar-title>-->
-<!--        <div class="row items-center">-->
-<!--          <q-btn-->
-<!--            color="accent"-->
-<!--            text-color="purple"-->
-<!--            :label="$i18n.locale"-->
-<!--            class="q-mr-sm"-->
-<!--          >-->
-<!--            <q-menu :offset="[0, 5]">-->
-<!--              <q-list style="min-width: 100px">-->
-<!--                <q-item-->
-<!--                  v-for="locale in $i18n.availableLocales"-->
-<!--                  :key="locale"-->
-<!--                  clickable-->
-<!--                  v-close-popup-->
-<!--                  @click="setLanguage(locale)"-->
-<!--                >-->
-<!--                  <q-item-section class="text-uppercase">-->
-<!--                    {{ locale }}-->
-<!--                  </q-item-section>-->
-<!--                  <q-item-section v-if="locale === $i18n.locale">-->
-<!--                    <q-icon name="done" color="purple" size="20px" />-->
-<!--                  </q-item-section>-->
-<!--                </q-item>-->
-<!--              </q-list>-->
-<!--            </q-menu>-->
-<!--          </q-btn>-->
-
-<!--          <q-btn v-if="user" round>-->
-<!--            <q-avatar round color="accent" text-color="purple">-->
-<!--              {{ user.name[0] }}-->
-<!--            </q-avatar>-->
-<!--            <q-menu :offset="[0, 5]">-->
-<!--              <q-list>-->
-<!--                <q-item clickable v-close-popup @click="logout">-->
-<!--                  <q-item-section>{{ $t("label.logout") }}</q-item-section>-->
-<!--                </q-item>-->
-<!--              </q-list>-->
-<!--            </q-menu>-->
-<!--          </q-btn>-->
-
-<!--          <q-btn-->
-<!--            v-else-->
-<!--            @click="setAuthModalOpened(true)"-->
-<!--            no-caps-->
-<!--            color="accent"-->
-<!--            text-color="purple"-->
-<!--            :label="$t('label.login')"-->
-<!--          />-->
-<!--        </div>-->
-<!--      </q-toolbar>-->
-<!--    </q-header>-->
-
     <q-page-container>
       <q-page padding>
         <div class="row">
@@ -78,9 +23,6 @@
   </q-layout>
 
   <InitModal />
-  <AuthModal />
-  <CatalogModal />
-  <CustomProductModal />
 </template>
 
 <script>
@@ -103,9 +45,6 @@ import ModeSelector from "@/components/Controls/ModeSelector";
 import ControlsPanel from "@/components/Controls/Panel";
 
 import InitModal from "@/components/Modals/Init";
-import AuthModal from "@/components/Modals/Auth";
-import CatalogModal from "@/components/Modals/Catalog";
-import CustomProductModal from "@/components/Modals/CustomProduct";
 
 export default {
   name: "LayoutDefault",
@@ -117,9 +56,6 @@ export default {
     ControlsPanel,
     ModeSelector,
     InitModal,
-    AuthModal,
-    CatalogModal,
-    CustomProductModal,
   },
 
   mounted() {
@@ -198,8 +134,6 @@ export default {
     ...mapMutations("app", [
       "setUser",
       "setControlTab",
-      "setAuthModalOpened",
-      "setCatalogModalOpened",
     ]),
     ...mapMutations("order", ["setPricing"]),
     ...mapMutations("canvas", [

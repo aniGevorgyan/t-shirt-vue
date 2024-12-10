@@ -12,9 +12,7 @@ export default {
 
       controlTab: "product",
 
-      catalogModalOpened: false,
       authModalOpened: false,
-      customProductModalOpened: false,
 
       uploadedImages: ObjectStorage.get("print-uploaded-images", []),
     };
@@ -47,15 +45,6 @@ export default {
     },
     setControlTab(state, payload) {
       state.controlTab = payload;
-    },
-    setCatalogModalOpened(state, payload) {
-      state.catalogModalOpened = payload;
-    },
-    setAuthModalOpened(state, payload) {
-      state.authModalOpened = payload;
-    },
-    setCustomProductModalOpened(state, payload) {
-      state.customProductModalOpened = payload;
     },
     pushUploadedImage(state, payload) {
       state.uploadedImages.push(payload);
