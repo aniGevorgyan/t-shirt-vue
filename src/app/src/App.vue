@@ -159,7 +159,7 @@ export default {
     },
 
     async loadProductModels(userId) {
-      let models = await ProductService.getModels(userId);
+      let models = await ProductService.getModel('184');
       this.setModels(models);
     },
 

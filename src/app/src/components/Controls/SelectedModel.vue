@@ -16,6 +16,7 @@
         >
           <q-icon
             v-if="selectedModelColor.id == image.id"
+            class="check-icon"
             name="check"
             size="34px"
           />
@@ -23,52 +24,52 @@
         </div>
       </q-card-actions>
 
-      <q-item tag="label">
-        <q-item-section>
-          <q-item-label>{{ $t("label.price") }}</q-item-label>
-        </q-item-section>
-        <q-item-section side>
-          <span class="text-bold"
-            >{{ price }} {{ !isNaN(Number(price)) ? "₽" : "" }}</span
-          >
-        </q-item-section>
-      </q-item>
+<!--      <q-item tag="label">-->
+<!--        <q-item-section>-->
+<!--          <q-item-label>{{ $t("label.price") }}</q-item-label>-->
+<!--        </q-item-section>-->
+<!--        <q-item-section side>-->
+<!--          <span class="text-bold"-->
+<!--            >{{ price }} {{ !isNaN(Number(price)) ? "₽" : "" }}</span-->
+<!--          >-->
+<!--        </q-item-section>-->
+<!--      </q-item>-->
 
-      <template v-if="!selectedModel.clientModel">
-        <q-list separator dense class="q-pa-md">
-          <q-item class="text-bold no-padding">
-            <q-item-section>
-              {{ $t("label.size") }}
-            </q-item-section>
-            <q-item-section class="q-mr-md text-right">
-              {{ $t("label.quantity") }}
-            </q-item-section>
-          </q-item>
-          <template v-for="size in selectedModel.sizes" :key="size">
-            <q-item class="no-padding">
-              <q-item-section v-text="size"></q-item-section>
-              <q-item-section avatar>
-                <q-input
-                  v-model="sizes[size]"
-                  type="number"
-                  input-class="text-right"
-                  min="0"
-                  borderless
-                  dense
-                />
-              </q-item-section>
-            </q-item>
-          </template>
-          <q-item class="text-bold no-padding">
-            <q-item-section>
-              {{ $t("label.total") }}
-            </q-item-section>
-            <q-item-section class="q-mr-md text-right">
-              {{ quantity }}
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </template>
+<!--      <template v-if="!selectedModel.clientModel">-->
+<!--        <q-list separator dense class="q-pa-md">-->
+<!--          <q-item class="text-bold no-padding">-->
+<!--            <q-item-section>-->
+<!--              {{ $t("label.size") }}-->
+<!--            </q-item-section>-->
+<!--            <q-item-section class="q-mr-md text-right">-->
+<!--              {{ $t("label.quantity") }}-->
+<!--            </q-item-section>-->
+<!--          </q-item>-->
+<!--          <template v-for="size in selectedModel.sizes" :key="size">-->
+<!--            <q-item class="no-padding">-->
+<!--              <q-item-section v-text="size"></q-item-section>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-input-->
+<!--                  v-model="sizes[size]"-->
+<!--                  type="number"-->
+<!--                  input-class="text-right"-->
+<!--                  min="0"-->
+<!--                  borderless-->
+<!--                  dense-->
+<!--                />-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
+<!--          </template>-->
+<!--          <q-item class="text-bold no-padding">-->
+<!--            <q-item-section>-->
+<!--              {{ $t("label.total") }}-->
+<!--            </q-item-section>-->
+<!--            <q-item-section class="q-mr-md text-right">-->
+<!--              {{ quantity }}-->
+<!--            </q-item-section>-->
+<!--          </q-item>-->
+<!--        </q-list>-->
+<!--      </template>-->
 
       <div class="row justify-center q-mt-md">
         <q-btn
@@ -216,8 +217,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #000;
-      font-weight: bold;
+      color: $primary;
       background: #ffffff82;
     }
   }

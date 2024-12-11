@@ -5,8 +5,18 @@ import { t } from "../locales";
 const ProductService = {
   async getModel(id) {
     try {
-      let result = await axios.get(`products/${id}`);
-      return result.data;
+      let result = await axios.get(`https://demo.yansprint.com/api/product/${id}?project_id=10`);
+      result.data.images.map((el) => {
+        if(el[2]) {
+          el.front = el[2];
+          delete el[2];
+        }
+        if(el[3]) {
+          el.back = el[3];
+          delete el[3];
+        }
+      });
+      return [result.data];
     } catch (e) {
       return false;
     }
