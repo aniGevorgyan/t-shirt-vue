@@ -3,9 +3,9 @@ import { Notify } from "quasar";
 import { t } from "../locales";
 
 const ProductService = {
-  async getModel(id) {
+  async getModel(product_id, project_id) {
     try {
-      let result = await axios.get(`https://demo.yansprint.com/api/product/${id}?project_id=10`);
+      let result = await axios.get(`https://demo.yansprint.com/api/product/${product_id}?project_id=${project_id}`);
       result.data.images.map((el) => {
         if(el[2]) {
           el.front = el[2];

@@ -59,7 +59,10 @@ export default {
   },
 
   mounted() {
-    this.loadProductModels(this.user?.id);
+    const url = new URL(window.location.href);
+    const product_id = url.searchParams.get('product_id');
+    const project_id = url.searchParams.get('project_id');
+    this.loadProductModels(product_id, project_id);
     this.loadPricing();
 
     const ref = this.$refs.canvas;
@@ -158,8 +161,8 @@ export default {
       }
     },
 
-    async loadProductModels(userId) {
-      let models = await ProductService.getModel('184');
+    async loadProductModels(product_id, project_id) {
+      let models = await ProductService.getModel(product_id, project_id);
       this.setModels(models);
     },
 

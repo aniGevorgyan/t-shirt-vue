@@ -6,70 +6,20 @@
 
     <q-card-section>
       <p class="text-subtitle1">{{ $t("label.color") }}</p>
-      <q-card-actions>
+      <q-card-actions class="colors">
         <div
           v-for="image in selectedModel.images"
           :key="image.front.url"
           @click="setSelectedModelColor(image)"
-          class="cursor-pointer model-colors"
-          :class="{ 'selected-model': selectedModelColor.id == image.id }"
-        >
+          class="cursor-pointer model-colors">
           <q-icon
             v-if="selectedModelColor.id == image.id"
             class="check-icon"
             name="check"
-            size="34px"
-          />
-          <img :src="image.front.url" />
+            size="20px"/>
+          <div class="color" :style="{ 'background': image.hex }" :class="{ 'active': selectedModelColor.id == image.id }"></div>
         </div>
       </q-card-actions>
-
-<!--      <q-item tag="label">-->
-<!--        <q-item-section>-->
-<!--          <q-item-label>{{ $t("label.price") }}</q-item-label>-->
-<!--        </q-item-section>-->
-<!--        <q-item-section side>-->
-<!--          <span class="text-bold"-->
-<!--            >{{ price }} {{ !isNaN(Number(price)) ? "₽" : "" }}</span-->
-<!--          >-->
-<!--        </q-item-section>-->
-<!--      </q-item>-->
-
-<!--      <template v-if="!selectedModel.clientModel">-->
-<!--        <q-list separator dense class="q-pa-md">-->
-<!--          <q-item class="text-bold no-padding">-->
-<!--            <q-item-section>-->
-<!--              {{ $t("label.size") }}-->
-<!--            </q-item-section>-->
-<!--            <q-item-section class="q-mr-md text-right">-->
-<!--              {{ $t("label.quantity") }}-->
-<!--            </q-item-section>-->
-<!--          </q-item>-->
-<!--          <template v-for="size in selectedModel.sizes" :key="size">-->
-<!--            <q-item class="no-padding">-->
-<!--              <q-item-section v-text="size"></q-item-section>-->
-<!--              <q-item-section avatar>-->
-<!--                <q-input-->
-<!--                  v-model="sizes[size]"-->
-<!--                  type="number"-->
-<!--                  input-class="text-right"-->
-<!--                  min="0"-->
-<!--                  borderless-->
-<!--                  dense-->
-<!--                />-->
-<!--              </q-item-section>-->
-<!--            </q-item>-->
-<!--          </template>-->
-<!--          <q-item class="text-bold no-padding">-->
-<!--            <q-item-section>-->
-<!--              {{ $t("label.total") }}-->
-<!--            </q-item-section>-->
-<!--            <q-item-section class="q-mr-md text-right">-->
-<!--              {{ quantity }}-->
-<!--            </q-item-section>-->
-<!--          </q-item>-->
-<!--        </q-list>-->
-<!--      </template>-->
 
       <div class="row justify-center q-mt-md">
         <q-btn
@@ -188,37 +138,43 @@ export default {
 </script>
 
 <style lang="scss">
+.text-subtitle1 {
+  margin: 0 0 5px;
+}
+
+.colors {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 0 0 20px 0!important;
+}
+
 .model-colors {
   position: relative;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 100%;
-  overflow: hidden;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  border: 1px solid #ccc;
 
-  img {
-    width: 110%;
-    height: 110%;
-    object-fit: none;
+  .check-icon {
+    font-size: 14px!important;
+    position: absolute;
+    z-index: 2;
+    right: -7px;
+    top: -7px;
+    color: white;
+    background: $primary;
+    border-radius: 50%;
+    padding: 3px;
   }
 
-  &.selected-model {
-    i {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: $primary;
-      background: #ffffff82;
+  .color {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 3px solid #FFF;
+    box-shadow: 0 0 0 1px #ccc;
+    position: relative;
+
+    &.active {
+      box-shadow: 0 0 0 1px $primary;
     }
   }
 }
