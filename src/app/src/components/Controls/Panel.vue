@@ -16,7 +16,7 @@
     <q-tab-panel name="product" class="q-px-none">
       <SelectedModel />
     </q-tab-panel>
-    <q-tab-panel name="object" class="q-px-none">
+    <q-tab-panel name="object" class="q-px-none scroll-area">
       <ObjectDetails />
     </q-tab-panel>
   </q-tab-panels>
