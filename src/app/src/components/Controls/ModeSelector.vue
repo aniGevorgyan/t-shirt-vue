@@ -14,7 +14,23 @@
         :class="{ active: mode == 'back' }"
         class="selector-item"
       >
-        <img :src="selectedModelColor.back.url" alt="" />
+        <img v-if="selectedModelColor.back" :src="selectedModelColor.back.url" alt="" />
+      </div>
+      <div
+          v-if="selectedModelColor.left_side"
+          @click="setMode('left_side')"
+          :class="{ active: mode == 'left_side' }"
+          class="selector-item"
+      >
+        <img v-if="selectedModelColor.left_side" :src="selectedModelColor.left_side.url" alt="" />
+      </div>
+      <div
+          v-if="selectedModelColor.right_side"
+          @click="setMode('right_side')"
+          :class="{ active: mode == 'right_side' }"
+          class="selector-item"
+      >
+        <img v-if="selectedModelColor.right_side" :src="selectedModelColor.right_side.url" alt="" />
       </div>
     </div>
   </div>

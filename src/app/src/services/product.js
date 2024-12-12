@@ -15,6 +15,14 @@ const ProductService = {
           el.back = el[3];
           delete el[3];
         }
+        if(el[4]) {
+          el.left_side = el[4];
+          delete el[4];
+        }
+        if(el[5]) {
+          el.right_side = el[5];
+          delete el[5];
+        }
       });
       return [result.data];
     } catch (e) {
