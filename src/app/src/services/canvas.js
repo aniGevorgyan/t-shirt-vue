@@ -56,7 +56,6 @@ class CanvasService {
             strokeWidth: 20,
             cornerSize: 15,
             transparentCorners: false,
-            globalCompositeOperation: "source-atop",
             _controlsVisibility: {
                 mt: false,
                 mb: false,
@@ -98,7 +97,6 @@ class CanvasService {
                 Context.canvas.renderAll();
             },
             {
-                globalCompositeOperation: "source-atop",
                 crossOrigin: "anonymous",
             },
         );

@@ -45,5 +45,17 @@ export default {
         ? state.selectedModelColor[rootState.canvas.mode].url
         : null;
     },
+
+    selectedModelCoordinated(state, getters, rootState) {
+      return state.selectedModelColor
+          ?
+          {
+            top: +state.selectedModelColor[rootState.canvas.mode].top,
+            left: +state.selectedModelColor[rootState.canvas.mode].left,
+            height: +state.selectedModelColor[rootState.canvas.mode].height,
+            width: +state.selectedModelColor[rootState.canvas.mode].width,
+          }
+          : null;
+    },
   },
 };

@@ -9,8 +9,18 @@
           <div class="col-md-6 col-sm-12 canvas-column">
             <div class="canvas-designer">
               <ModeSelector />
-              <div class="flex flex-center canvas-wrapper">
-                <canvas ref="canvas"></canvas>
+              <div class="flex flex-center">
+                <div class="canvas-wrapper" v-bind:style="{ backgroundImage: selectedModelColorUrl ? `url('${selectedModelColorUrl}')` : null }">
+                  <div class="canvas-block" :style="
+                       {
+                         height: selectedModelCoordinated?.height + 'px',
+                         width: selectedModelCoordinated?.width + 'px',
+                         top: selectedModelCoordinated?.top + 'px',
+                         left: selectedModelCoordinated?.left + 'px',
+                       }">
+                    <canvas :style="{border: '1px solid #e0e0e066', borderRadius: '5px'}" ref="canvas"></canvas>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -67,8 +77,6 @@ export default {
     const ref = this.$refs.canvas;
     this.ctx.canvas = new fabric.Canvas(ref, {
       selection: false,
-      width: 600,
-      height: 500,
       allowTouchScrolling: true,
     });
 
@@ -121,6 +129,7 @@ export default {
     ...mapState("canvas", ["selectedLayer"]),
     ...mapState("product", ["selectedModelColor"]),
     ...mapGetters("product", ["selectedModelColorUrl"]),
+    ...mapGetters("product", ["selectedModelCoordinated"]),
   },
 
   watch: {
@@ -128,7 +137,10 @@ export default {
       this.loadProductModels(newUser?.id);
     },
     selectedModelColorUrl(url) {
-      if (url) CanvasService.drawSelectedModel();
+      this.ctx.canvas.setHeight(this.selectedModelCoordinated.height);
+      this.ctx.canvas.setWidth(this.selectedModelCoordinated.width);
+      this.ctx.canvas.renderAll();
+      // if (url) CanvasService.drawSelectedModel();
     },
   },
 
@@ -183,6 +195,20 @@ export default {
   box-shadow: 0 0 5px #d9d9d9;
   position: sticky;
   top: 55px;
+
+  .canvas-wrapper {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    width: 600px;
+    height: 500px;
+    margin: 20px 0;
+
+    .canvas-block {
+      position: relative;
+    }
+  }
+
   @media (min-width: $breakpoint-sm) {
     margin: 0 10px;
   }
