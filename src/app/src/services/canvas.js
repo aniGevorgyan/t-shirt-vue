@@ -9,8 +9,8 @@ export const Context = {
 };
 
 class CanvasService {
-    static fontSize = 24;
-    static scale = 0.9;
+    static fontSize = 16;
+    static scale = 1;
 
     static drawSelectedModel() {
         const center = Context.canvas.getCenter();
@@ -44,7 +44,7 @@ class CanvasService {
             mode: store.state.canvas.mode,
             fill: "#000000",
             fontSize: CanvasService.fontSize,
-            fontFamily: "Roboto",
+            fontFamily: "Lato",
             scaleX: 1,
             scaleY: 1,
             top: center.top,

@@ -36,7 +36,7 @@ const messages = {
   "label.size": "Size",
   "label.quantity": "Quantity",
   "label.total": "Total",
-  "label.order": "Order",
+  "label.order": "Add to Card",
 
   "label.phone": "Phone number",
   "label.send": "Send",

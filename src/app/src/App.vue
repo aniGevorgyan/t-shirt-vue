@@ -63,13 +63,12 @@ export default {
     const product_id = url.searchParams.get('product_id');
     const project_id = url.searchParams.get('project_id');
     this.loadProductModels(product_id, project_id);
-    this.loadPricing();
 
     const ref = this.$refs.canvas;
     this.ctx.canvas = new fabric.Canvas(ref, {
       selection: false,
       width: 600,
-      height: 560,
+      height: 500,
       allowTouchScrolling: true,
     });
 

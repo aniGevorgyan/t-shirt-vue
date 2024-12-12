@@ -79,10 +79,7 @@ export default {
     ...mapActions("order", ["calculatePrice"]),
 
     canOrder() {
-      return (
-        (!this.selectedModel.clientModel && this.quantity > 0) ||
-        (this.selectedModel.clientModel && this.layers.length > 0)
-      );
+      return this.layers.length > 0;
     },
 
     quantityHtml() {
@@ -138,10 +135,6 @@ export default {
 </script>
 
 <style lang="scss">
-.text-subtitle1 {
-  margin: 0 0 5px;
-}
-
 .colors {
   display: flex;
   gap: 10px;
