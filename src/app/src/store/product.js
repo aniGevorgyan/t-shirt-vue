@@ -47,13 +47,14 @@ export default {
     },
 
     selectedModelCoordinated(state, getters, rootState) {
+      const DPI = 96;
       return state.selectedModelColor
           ?
           {
-            top: +state.selectedModelColor[rootState.canvas.mode].top,
-            left: +state.selectedModelColor[rootState.canvas.mode].left,
-            height: +state.selectedModelColor[rootState.canvas.mode].height,
-            width: +state.selectedModelColor[rootState.canvas.mode].width,
+            top: state.selectedModelColor[rootState.canvas.mode].top * DPI,
+            left: state.selectedModelColor[rootState.canvas.mode].left * DPI,
+            height: state.selectedModelColor[rootState.canvas.mode].height * DPI,
+            width: state.selectedModelColor[rootState.canvas.mode].width * DPI,
           }
           : null;
     },
