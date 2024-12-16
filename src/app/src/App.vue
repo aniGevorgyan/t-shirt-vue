@@ -9,7 +9,7 @@
           <div class="col-md-6 col-sm-12 canvas-column">
             <div class="canvas-designer">
               <ModeSelector />
-              <div class="flex flex-center sm-overflow-scroll">
+              <div class="flex flex-center sm-overflow-scroll" id="canvas-custom">
                 <div class="canvas-wrapper" v-bind:style="{ backgroundImage: selectedModelColorUrl ? `url('${selectedModelColorUrl}')` : null }">
                   <div class="canvas-block" :style="
                        {
@@ -43,7 +43,6 @@ import { fabric } from "fabric";
 import { syncLanguage } from "./locales";
 
 import UserService from "@/services/user";
-import OrderService from "@/services/order";
 import CanvasService from "@/services/canvas";
 import ProductService from "@/services/product";
 

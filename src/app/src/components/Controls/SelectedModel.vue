@@ -46,6 +46,7 @@ import { mapMutations } from "vuex";
 import OrderService from "@/services/order";
 import CanvasService from "@/services/canvas";
 import LoadingItem from "@/components/Layers/Loading";
+import html2canvas from "html2canvas";
 
 export default {
   name: "SelectedModel",
@@ -79,43 +80,50 @@ export default {
     ...mapMutations("product", ["setSelectedModelColor"]),
     ...mapMutations("app", [
     ]),
+    ...mapMutations("canvas", [
+      "resetSelectedLayer",
+    ]),
     ...mapActions("order", ["calculatePrice"]),
 
     canOrder() {
       return this.layers.length > 0;
     },
 
-    quantityHtml() {
-      let html = "";
-      for (let size in this.sizes) {
-        if (this.sizes[size] == 0) continue;
-        html += `<b>${size.toUpperCase()}:</b> ${this.sizes[size]}<br/>`;
-      }
-      return html;
-    },
-
     async createOrder() {
       this.loading = true;
+      const element = document.getElementById("canvas-custom");
+      let screenShot = '';
       const url = new URL(window.location.href);
       const product_id = url.searchParams.get('product_id');
       const project_id = url.searchParams.get('project_id');
-      let order = await OrderService.create({
-        title: "Order №" + Date.now(),
-        productId: product_id,
-        projectId: project_id,
-        json: JSON.stringify({
-          model: this.selectedModelColor,
-          canvasData: CanvasService.toJSON(),
-        }),
-      });
+      this.resetSelectedLayer();
 
-      if (order) {
-        this.orderModal = false;
-        this.orderCreatedModal = true;
-      }
+      html2canvas(element, {useCORS: true})
+          .then((canvas) => {
+            screenShot = canvas.toDataURL("image/png");
 
-      this.loading = false;
-      console.log("post data", order);
+            let order = OrderService.create({
+              title: "Order №" + Date.now(),
+              screenShot: screenShot,
+              productId: product_id,
+              projectId: project_id,
+              json: JSON.stringify({
+                model: this.selectedModelColor,
+                canvasData: CanvasService.toJSON(),
+              }),
+            });
+
+            if (order) {
+              this.orderModal = false;
+              this.orderCreatedModal = true;
+            }
+
+            this.loading = false;
+            console.log("post data", order);
+          })
+          .catch((error) => {
+            console.error("Error capturing screenshot:", error);
+          });
     },
   },
 };
