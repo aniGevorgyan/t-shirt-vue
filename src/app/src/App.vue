@@ -9,7 +9,7 @@
           <div class="col-md-6 col-sm-12 canvas-column">
             <div class="canvas-designer">
               <ModeSelector />
-              <div class="flex flex-center">
+              <div class="flex flex-center sm-overflow-scroll">
                 <div class="canvas-wrapper" v-bind:style="{ backgroundImage: selectedModelColorUrl ? `url('${selectedModelColorUrl}')` : null }">
                   <div class="canvas-block" :style="
                        {
@@ -18,7 +18,7 @@
                          top: selectedModelCoordinated?.top + 'px',
                          left: selectedModelCoordinated?.left + 'px',
                        }">
-                    <canvas :style="{border: '1px solid #e0e0e066', borderRadius: '5px'}" ref="canvas"></canvas>
+                    <canvas :style="selectedLayer.layerId ? {border: '1px solid #e0e0e066', borderRadius: '5px'} : {}" ref="canvas"></canvas>
                   </div>
                 </div>
               </div>
@@ -165,13 +165,6 @@ export default {
       }
     },
 
-    async loadPricing() {
-      let prices = await OrderService.getPrices();
-      if (prices) {
-        this.setPricing(prices);
-      }
-    },
-
     async loadProductModels(product_id, project_id) {
       let models = await ProductService.getModel(product_id, project_id);
       this.setModels(models);
@@ -196,13 +189,21 @@ export default {
   position: sticky;
   top: 55px;
 
+  .sm-overflow-scroll {
+    @media (max-width: $breakpoint-sm) {
+      overflow-y: scroll;
+    }
+  }
+
   .canvas-wrapper {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
     width: 600px;
+    min-width: 600px;
     height: 500px;
     margin: 20px 0;
+    position: relative;
 
     .canvas-block {
       position: relative;
@@ -229,14 +230,6 @@ export default {
   .canvas-wrapper {
     width: calc(100vw - 20px);
     overflow: hidden;
-  }
-  .canvas-container {
-    position: relative;
-    left: 50%;
-    margin-left: -100%;
-    margin-top: calc(25% * -0.7);
-    margin-bottom: calc(30% * -0.7);
-    transform: scale(0.7);
   }
 }
 </style>

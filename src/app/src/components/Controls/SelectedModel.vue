@@ -23,13 +23,15 @@
 
       <div class="row justify-center q-mt-md">
         <q-btn
+          v-if="!loading"
           no-caps
           color="primary"
           icon="shopping_basket"
           :label="$t('label.order')"
-          @click="orderModal = true"
+          @click="createOrder"
           :disabled="!canOrder()"
         />
+        <LoadingItem v-if="loading"/>
       </div>
     </q-card-section>
   </q-card>
@@ -43,10 +45,11 @@ import { mapMutations } from "vuex";
 
 import OrderService from "@/services/order";
 import CanvasService from "@/services/canvas";
+import LoadingItem from "@/components/Layers/Loading";
 
 export default {
   name: "SelectedModel",
-
+  components: {LoadingItem},
   data: () => ({
     orderModal: false,
     orderCreatedModal: false,
@@ -92,31 +95,15 @@ export default {
     },
 
     async createOrder() {
-      if (!this.isValidPhone(this.phone)) {
-        this.$refs.phoneInput.validate();
-        return;
-      }
-
-      if (!this.validateEmail(this.email)) {
-        this.$refs.emailInput.validate();
-        return;
-      }
-
       this.loading = true;
-
-      let captures = await CanvasService.capture();
-
+      const url = new URL(window.location.href);
+      const product_id = url.searchParams.get('product_id');
+      const project_id = url.searchParams.get('project_id');
       let order = await OrderService.create({
         title: "Order №" + Date.now(),
-        clientModel: this.selectedModel.clientModel,
-        phone: this.phone,
-        email: this.email,
-        price: this.price,
-        quantity: this.quantityHtml(),
-        front: captures.front.id,
-        back: captures.back ? captures.back.id : null,
+        productId: product_id,
+        projectId: project_id,
         json: JSON.stringify({
-          sizes: this.sizes,
           model: this.selectedModelColor,
           canvasData: CanvasService.toJSON(),
         }),
@@ -125,10 +112,10 @@ export default {
       if (order) {
         this.orderModal = false;
         this.orderCreatedModal = true;
-        this.phone = "";
-        this.email = "";
       }
+
       this.loading = false;
+      console.log("post data", order);
     },
   },
 };
