@@ -2,6 +2,7 @@
   <div class="q-pa-md row items-start mode-selector">
     <div v-if="selectedModelColor" class="selectors-wrapper">
       <div
+        v-if="selectedModelColor.front"
         @click="setMode('front')"
         :class="{ active: mode == 'front' }"
         class="selector-item"
@@ -14,7 +15,7 @@
         :class="{ active: mode == 'back' }"
         class="selector-item"
       >
-        <img v-if="selectedModelColor.back" :src="selectedModelColor.back.url" alt="" />
+        <img :src="selectedModelColor.back.url" alt="" />
       </div>
       <div
           v-if="selectedModelColor.left_side"
@@ -22,7 +23,7 @@
           :class="{ active: mode == 'left_side' }"
           class="selector-item"
       >
-        <img v-if="selectedModelColor.left_side" :src="selectedModelColor.left_side.url" alt="" />
+        <img :src="selectedModelColor.left_side.url" alt="" />
       </div>
       <div
           v-if="selectedModelColor.right_side"
@@ -30,7 +31,7 @@
           :class="{ active: mode == 'right_side' }"
           class="selector-item"
       >
-        <img v-if="selectedModelColor.right_side" :src="selectedModelColor.right_side.url" alt="" />
+        <img :src="selectedModelColor.right_side.url" alt="" />
       </div>
     </div>
   </div>
@@ -47,17 +48,12 @@ export default {
 
   computed: {
     ...mapState("canvas", ["mode"]),
-    ...mapState("product", ["selectedModel", "selectedModelColor"]),
+    ...mapState("product", ["selectedModelColor"]),
   },
 
   watch: {
     mode() {
       this.changeMode();
-    },
-    selectedModel() {
-      if (typeof this.selectedModelColor.back === "undefined") {
-        this.setMode("front");
-      }
     },
   },
 

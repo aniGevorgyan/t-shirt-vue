@@ -34,7 +34,7 @@ export default {
     setSelectedModelColor(state, payload) {
       state.selectedModelColor = payload;
     },
-    selectFristModel(state) {
+    selectFirstModel(state) {
       this.commit("product/setSelectedModel", state.models[0]);
     },
   },

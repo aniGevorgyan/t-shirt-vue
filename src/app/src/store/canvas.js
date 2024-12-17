@@ -3,7 +3,7 @@ export default {
 
   state() {
     return {
-      mode: "front",
+      mode: null,
       layers: [],
       selectedLayer: SelectedLayerInitialProps(),
     };

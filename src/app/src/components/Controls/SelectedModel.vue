@@ -9,7 +9,7 @@
       <q-card-actions class="colors">
         <div
           v-for="image in selectedModel.images"
-          :key="image.front.url"
+          :key="image[getMode()].url"
           @click="setSelectedModelColor(image)"
           class="cursor-pointer model-colors">
           <q-icon
@@ -72,7 +72,7 @@ export default {
     ...mapState("app", ["user", "pricing"]),
     ...mapState("order", ["price", "sizes"]),
     ...mapState("product", ["selectedModel", "selectedModelColor"]),
-    ...mapState("canvas", ["layers"]),
+    ...mapState("canvas", ["mode", "layers"]),
     ...mapGetters("order", ["quantity"]),
   },
 
@@ -87,6 +87,10 @@ export default {
 
     canOrder() {
       return this.layers.length > 0;
+    },
+
+    getMode() {
+      return this.mode;
     },
 
     async createOrder() {

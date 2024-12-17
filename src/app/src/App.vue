@@ -150,6 +150,7 @@ export default {
     ]),
     ...mapMutations("order", ["setPricing"]),
     ...mapMutations("canvas", [
+      "setMode",
       "syncLayers",
       "setSelectedLayer",
       "resetSelectedLayer",
@@ -167,6 +168,22 @@ export default {
     async loadProductModels(product_id, project_id) {
       let models = await ProductService.getModel(product_id, project_id);
       this.setModels(models);
+
+      if (models[0].images[0].front) {
+        return this.setMode('front')
+      }
+
+      if (models[0].images[0].back) {
+        return this.setMode('back')
+      }
+
+      if (models[0].images[0].left_side) {
+        return this.setMode('left_side')
+      }
+
+      if (models[0].images[0].right_side) {
+        return this.setMode('right_side')
+      }
     },
 
     async logout() {
