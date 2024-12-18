@@ -26,7 +26,7 @@
           v-if="!loading"
           no-caps
           color="primary"
-          icon="shopping_basket"
+          icon="add_shopping_cart"
           :label="$t('label.order')"
           @click="createOrder"
           :disabled="!canOrder()"

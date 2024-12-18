@@ -4,43 +4,58 @@
       <q-page padding>
         <div class="row">
           <div class="col-md-3 col-sm-12 sm-full-width">
-            <LayersPanel />
+            <LayersPanel/>
           </div>
           <div class="col-md-6 col-sm-12 canvas-column">
             <div class="canvas-designer">
-              <ModeSelector />
+              <ModeSelector/>
               <div class="flex flex-center sm-overflow-scroll" id="canvas-custom">
-                <div class="canvas-wrapper" v-bind:style="{ backgroundImage: selectedModelColorUrl ? `url('${selectedModelColorUrl}')` : null }">
-                  <div class="canvas-block" :style="
+                <div class="canvas-wrapper"
+                     v-bind:style="{ backgroundImage: selectedModelColorUrl ? `url('${selectedModelColorUrl}')` : null }">
+                  <div class="canvas-block" :class="{ lrSide: ifSideMode() }" :style="
                        {
+                         height: selectedModelCoordinated?.height + 'px',
+                         width: selectedModelCoordinated?.width + 'px',
+                         top: (ifSideMode() ? null : selectedModelCoordinated?.top + 'px'),
+                         bottom: (ifSideMode() ? 0 : null),
+                         left: (ifSideMode() ? 0 : selectedModelCoordinated?.left) + 'px',
+                         backgroundColor: ifSideMode() ? selectedModelColor?.hex : null,
+                       }">
+                    <canvas
+                        :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066', borderRadius: '5px'} : {}"
+                        ref="canvas"></canvas>
+                  </div>
+                  <div class="canvas-block-2" :style="
+                       {
+                         visibility: ifSideMode() ? 'visible' : 'hidden',
                          height: selectedModelCoordinated?.height + 'px',
                          width: selectedModelCoordinated?.width + 'px',
                          top: selectedModelCoordinated?.top + 'px',
                          left: selectedModelCoordinated?.left + 'px',
                        }">
-                    <canvas :style="selectedLayer.layerId ? {border: '1px solid #e0e0e066', borderRadius: '5px'} : {}" ref="canvas"></canvas>
+                    <canvas ref="canvas2"></canvas>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="col-md-3 col-sm-12 order-sm-last sm-full-width">
-            <ControlsPanel />
+            <ControlsPanel/>
           </div>
         </div>
       </q-page>
     </q-page-container>
   </q-layout>
 
-  <InitModal />
+  <InitModal/>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { mapGetters } from "vuex";
-import { mapMutations } from "vuex";
-import { fabric } from "fabric";
-import { syncLanguage } from "./locales";
+import {mapState} from "vuex";
+import {mapGetters} from "vuex";
+import {mapMutations} from "vuex";
+import {fabric} from "fabric";
+import {syncLanguage} from "./locales";
 
 import UserService from "@/services/user";
 import CanvasService from "@/services/canvas";
@@ -74,45 +89,58 @@ export default {
     this.loadProductModels(product_id, project_id);
 
     const ref = this.$refs.canvas;
+    const ref2 = this.$refs.canvas2;
     this.ctx.canvas = new fabric.Canvas(ref, {
       selection: false,
       allowTouchScrolling: true,
     });
 
+    this.ctx.canvas2 = new fabric.Canvas(ref2);
+
     this.ctx.canvas.on("before:selection:cleared", () => {
       this.resetSelectedLayer();
       this.setControlTab("product");
+      this.syncToCanvas2();
     });
 
     this.ctx.canvas.on("selection:created", (event) => {
       this.handleSelection(event);
+      this.syncToCanvas2();
     });
 
     this.ctx.canvas.on("selection:updated", (event) => {
       this.handleSelection(event);
+      this.syncToCanvas2();
     });
 
     this.ctx.canvas.on("object:modified", (event) => {
       if (event.action === "scale" || event.action === "rotate") {
         this.selectedLayer.dirty = true;
       }
+      this.syncToCanvas2();
     });
 
     this.ctx.canvas.on({
-      "object:added": () => this.syncLayers(this.ctx.canvas.getObjects()),
-      "object:removed": () => this.syncLayers(this.ctx.canvas.getObjects()),
+      "object:added": () => {
+        this.syncLayers(this.ctx.canvas.getObjects());
+        this.syncToCanvas2();
+      },
+      "object:removed": () => {
+        this.syncLayers(this.ctx.canvas.getObjects());
+        this.syncToCanvas2();
+      },
     });
 
-    this.ctx.canvas.on("mouse:dblclick", ({ target}) => {
-      if(target && target.type === 'image'){
-       CanvasService.prepareCrop(target)
+    this.ctx.canvas.on("mouse:dblclick", ({target}) => {
+      if (target && target.type === 'image') {
+        CanvasService.prepareCrop(target)
       }
     })
 
     document.addEventListener("keydown", (e) => {
       if (
-        ["Delete", "Backspace"].includes(e.key) &&
-        this.selectedLayer.layerId
+          ["Delete", "Backspace"].includes(e.key) &&
+          this.selectedLayer.layerId
       ) {
         if (document.querySelector(".layer-text-field")?.matches(":focus"))
           return;
@@ -125,21 +153,24 @@ export default {
 
   computed: {
     ...mapState("app", ["user"]),
-    ...mapState("canvas", ["selectedLayer"]),
+    ...mapState("canvas", ["mode", "selectedLayer"]),
     ...mapState("product", ["selectedModelColor"]),
     ...mapGetters("product", ["selectedModelColorUrl"]),
     ...mapGetters("product", ["selectedModelCoordinated"]),
   },
 
   watch: {
-    user(newUser) {
-      this.loadProductModels(newUser?.id);
+    sideMode() {
+      this.ifSideMode();
     },
     selectedModelColorUrl(url) {
       this.ctx.canvas.setHeight(this.selectedModelCoordinated.height);
       this.ctx.canvas.setWidth(this.selectedModelCoordinated.width);
       this.ctx.canvas.renderAll();
-      // if (url) CanvasService.drawSelectedModel();
+
+      this.ctx.canvas2.setHeight(this.selectedModelCoordinated.height);
+      this.ctx.canvas2.setWidth(this.selectedModelCoordinated.width);
+      this.ctx.canvas2.renderAll();
     },
   },
 
@@ -163,6 +194,17 @@ export default {
         this.setSelectedLayer(layer);
         this.setControlTab("object");
       }
+    },
+
+    ifSideMode() {
+      return this.mode === 'left_side' || this.mode === 'right_side';
+    },
+
+    syncToCanvas2() {
+      const json = this.ctx.canvas.toJSON();
+      this.ctx.canvas2.loadFromJSON(json, this.ctx.canvas2.renderAll.bind(this.ctx.canvas2), function (o, object) {
+        object.set('selectable', false);
+      });
     },
 
     async loadProductModels(product_id, project_id) {
@@ -201,13 +243,15 @@ export default {
 
 <style lang="scss">
 .canvas-designer {
-  box-shadow: 0 0 5px #d9d9d9;
+  //box-shadow: 0 0 5px #d9d9d9;
   position: sticky;
   top: 55px;
 
   .sm-overflow-scroll {
     @media (max-width: $breakpoint-sm) {
       overflow-y: scroll;
+      justify-content: initial;
+      margin-top: 20px;
     }
   }
 
@@ -218,11 +262,15 @@ export default {
     width: 600px;
     min-width: 600px;
     height: 500px;
-    margin: 20px 0;
     position: relative;
 
-    .canvas-block {
-      position: relative;
+    .canvas-block, .canvas-block-2 {
+      position: absolute;
+
+      &.lrSide {
+        transform-origin: 0 100%;
+        transform: scale(4, 4);
+      }
     }
   }
 

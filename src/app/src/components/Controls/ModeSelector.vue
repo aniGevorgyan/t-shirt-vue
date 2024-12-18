@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md row items-start mode-selector">
+  <div class="row items-start mode-selector">
     <div v-if="selectedModelColor" class="selectors-wrapper">
       <div
         v-if="selectedModelColor.front"

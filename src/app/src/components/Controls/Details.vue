@@ -247,6 +247,7 @@ export default {
         if (this.ctx.canvas.getActiveObject()) {
           this.ctx.canvas.getActiveObject().dirty = true;
           this.ctx.canvas.renderAll();
+          this.syncToCanvas2();
         }
       },
       deep: true,
@@ -293,6 +294,12 @@ export default {
           this.ctx.canvas.getActiveObject().scaleX * CanvasService.fontSize,
         ) + "px"
       );
+    },
+    syncToCanvas2() {
+      const json = this.ctx.canvas.toJSON();
+      this.ctx.canvas2.loadFromJSON(json, this.ctx.canvas2.renderAll.bind(this.ctx.canvas2), function(o, object) {
+        object.set('selectable', false);
+      });
     },
   },
 };

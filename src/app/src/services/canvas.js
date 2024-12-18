@@ -6,35 +6,12 @@ import MediaService from "@/services/media";
 
 export const Context = {
     canvas: null,
+    canvas2: null,
 };
 
 class CanvasService {
     static fontSize = 16;
     static scale = 1;
-
-    static drawSelectedModel() {
-        const center = Context.canvas.getCenter();
-        Context.canvas.setBackgroundImage(
-            store.getters["product/selectedModelColorUrl"],
-            (data) => {
-                Context.canvas.backgroundImage.scaleX =
-                    (Context.canvas.getWidth() / data.width) * CanvasService.scale;
-                Context.canvas.backgroundImage.scaleY =
-                    (Context.canvas.getHeight() / data.height) * CanvasService.scale;
-                return Context.canvas.renderAll();
-            },
-            {
-                backgroundImageOpacity: 1,
-                backgroundImageStretch: false,
-                top: center.top,
-                left: center.left,
-                originX: "center",
-                originY: "center",
-                crossOrigin: "anonymous",
-            },
-        );
-        Context.canvas.renderAll();
-    }
 
     static addTextLayer(text = "Print Designer") {
         let center = Context.canvas.getCenter();
@@ -108,6 +85,11 @@ class CanvasService {
         });
         Context.canvas.discardActiveObject();
         Context.canvas.renderAll();
+
+        const json = Context.canvas.toJSON();
+        Context.canvas2.loadFromJSON(json, Context.canvas2.renderAll.bind(Context.canvas2), function (o, object) {
+            object.set('selectable', false);
+        });
     }
 
     static selectLayer(layer, callback = () => {
