@@ -26,11 +26,14 @@
           v-if="!loading"
           no-caps
           color="primary"
-          icon="add_shopping_cart"
-          :label="$t('label.order')"
           @click="createOrder"
-          :disabled="!canOrder()"
-        />
+          :disabled="!canOrder()">
+          <q-img
+              :src="svgPath"
+              alt="Custom Icon"
+              style="width: 20px; height: 20px; margin-right: 8px;"/>
+          <span>Add to Card</span>
+        </q-btn>
         <LoadingItem v-if="loading"/>
       </div>
     </q-card-section>
@@ -57,6 +60,7 @@ export default {
     loading: false,
     phone: "",
     email: "",
+    svgPath: require('@/assets/cart.svg'),
   }),
 
   watch: {

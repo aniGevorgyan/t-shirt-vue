@@ -1,12 +1,12 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
-      <q-page padding>
+      <q-page class="main-content">
         <div class="row">
-          <div class="col-md-3 col-sm-12 sm-full-width">
+          <div class="layers-panel sm-full-width">
             <LayersPanel/>
           </div>
-          <div class="col-md-6 col-sm-12 canvas-column">
+          <div class="canvas-column">
             <div class="canvas-designer">
               <ModeSelector/>
               <div class="flex flex-center sm-overflow-scroll" id="canvas-custom">
@@ -39,7 +39,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-3 col-sm-12 order-sm-last sm-full-width">
+          <div class="control-panel order-sm-last sm-full-width">
             <ControlsPanel/>
           </div>
         </div>
@@ -246,6 +246,8 @@ export default {
   //box-shadow: 0 0 5px #d9d9d9;
   position: sticky;
   top: 55px;
+  display: flex;
+  gap: 10px;
 
   .sm-overflow-scroll {
     @media (max-width: $breakpoint-sm) {
@@ -282,9 +284,24 @@ export default {
   }
 }
 
-.canvas-column {
-  width: 100%;
+.main-content {
   @media (max-width: $breakpoint-sm) {
+    padding: 15px;
+  }
+}
+
+.layers-panel, .control-panel  {
+  width: 335px;
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+  }
+}
+
+.canvas-column {
+  width: 700px;
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
     order: -1;
     margin-bottom: 30px;
   }

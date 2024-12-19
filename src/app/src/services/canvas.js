@@ -13,7 +13,7 @@ class CanvasService {
     static fontSize = 16;
     static scale = 1;
 
-    static addTextLayer(text = "Print Designer") {
+    static addTextLayer(text = "Yans Print") {
         let center = Context.canvas.getCenter();
         let textLayer = new fabric.Text(text, {
             layerId: Date.now(),

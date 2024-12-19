@@ -148,6 +148,7 @@
           filled
           v-model="selectedLayer.text"
           type="textarea"
+          :rows="3"
           input-class="layer-text-field"
         />
 

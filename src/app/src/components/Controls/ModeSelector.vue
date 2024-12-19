@@ -69,9 +69,12 @@ export default {
 
 <style lang="scss">
 .mode-selector {
-  position: absolute;
   z-index: 9;
   top: 0;
+
+  @media (max-width: $breakpoint-sm) {
+    position: absolute;
+  }
 
   .selector-item {
     background: #fff;
