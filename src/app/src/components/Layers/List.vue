@@ -81,6 +81,10 @@ export default {
       this.loadingLayer = true;
 
       let data = new FormData();
+      const url = new URL(window.location.href);
+      const project_id = url.searchParams.get('project_id');
+
+      data.append('project_id', project_id);
       data.append("file_preview", file);
 
       let image = await MediaService.upload(data);

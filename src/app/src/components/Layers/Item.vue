@@ -53,6 +53,7 @@ import { mapState } from "vuex";
 import { mapMutations } from "vuex";
 
 import CanvasService from "@/services/canvas";
+import MediaService from "@/services/media";
 
 export default {
   name: "LayerItem",
@@ -77,6 +78,18 @@ export default {
     },
 
     removeLayer(layer) {
+      if(layer.layerType === 'image') {
+        const url = new URL(window.location.href);
+        const project_id = url.searchParams.get('project_id');
+
+        let data = {
+          project_id,
+          file_name: layer._originalElement?.currentSrc,
+        }
+
+        MediaService.deleteFile(data);
+      }
+
       CanvasService.removeLayer(layer);
     },
 

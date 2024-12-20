@@ -27,6 +27,16 @@ const MediaService = {
       return false;
     }
   },
+
+  async deleteFile(data) {
+    try {
+      let result = await axios.delete("https://demo.yansprint.com/api/file-delete", {data});
+      return result.data;
+    } catch (e) {
+      Notify.create({ type: "error", message: t("text.error.cantDeleteFile") });
+      return false;
+    }
+  },
 };
 
 export default MediaService;
