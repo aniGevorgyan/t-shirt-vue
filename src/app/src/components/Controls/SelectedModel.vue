@@ -128,10 +128,10 @@ export default {
         const canvas = await html2canvas(element, {useCORS: true});
         const screenShot = canvas.toDataURL("image/png");
 
-        const downloadLink = document.createElement('a');
-        downloadLink.href = screenShot;  // Set the href to the screenshot data URL
-        downloadLink.download = `order_screenshot_${Date.now()}.png`;  // Set the filename
-        downloadLink.click();
+        // const downloadLink = document.createElement('a');
+        // downloadLink.href = screenShot;  // Set the href to the screenshot data URL
+        // downloadLink.download = `order_screenshot_${Date.now()}.png`;  // Set the filename
+        // downloadLink.click();
 
         // Wait for the order to be created
         const order = await OrderService.create({

@@ -220,6 +220,13 @@ export default {
       let models = await ProductService.getModel(product_id, project_id);
       this.setModels(models);
 
+      if (models[0]?.canvas) {
+        let data = JSON.parse(models[0]?.canvas.json);
+        CanvasService.loadFromJSON(data.canvasData, () => {
+          CanvasService.changeMode();
+        });
+      }
+
       if (models[0].images[0].front) {
         return this.setMode('front')
       }
