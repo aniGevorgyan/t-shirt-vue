@@ -17,7 +17,16 @@
             class="check-icon"
             name="check"
             size="20px"/>
-          <div class="color" :style="{ 'background': image.hex }" :class="{ 'active': selectedModelColor.id == image.id }"></div>
+          <div class="color" :style="{ 'background': image.hex }" :class="{ 'active': selectedModelColor.id == image.id }">
+            <q-tooltip
+                class="bg-blue-8 text-body2"
+                anchor="top middle"
+                self="bottom middle"
+                :offset="[10, 10]"
+            >
+              {{ image.color_name }}
+            </q-tooltip>
+          </div>
         </div>
       </q-card-actions>
 
@@ -47,7 +56,7 @@ import { mapGetters } from "vuex";
 import { mapMutations } from "vuex";
 
 import OrderService from "@/services/order";
-import CanvasService from "@/services/canvas";
+import CanvasService, {Context} from "@/services/canvas";
 import LoadingItem from "@/components/Layers/Loading";
 import html2canvas from "html2canvas";
 
@@ -82,8 +91,7 @@ export default {
 
   methods: {
     ...mapMutations("product", ["setSelectedModelColor"]),
-    ...mapMutations("app", [
-    ]),
+    ...mapMutations("app", []),
     ...mapMutations("canvas", [
       "resetSelectedLayer",
     ]),
@@ -99,21 +107,31 @@ export default {
 
     async createOrder() {
       this.loading = true;
-      const element = document.getElementById("canvas-custom");
       const url = new URL(window.location.href);
       const product_id = url.searchParams.get('product_id');
       const project_id = url.searchParams.get('project_id');
       this.resetSelectedLayer();
 
       try {
-        // Wait for the canvas to be generated
-        const canvas = await html2canvas(element, { useCORS: true });
+        let active = Context.canvas.getActiveObject();
+
+        if (active) {
+          active.set({
+            borderColor: 'transparent',
+            cornerColor: 'transparent',
+          });
+
+          Context.canvas.renderAll();
+        }
+
+        const element = document.getElementById("canvas-custom");
+        const canvas = await html2canvas(element, {useCORS: true});
         const screenShot = canvas.toDataURL("image/png");
 
-        // const downloadLink = document.createElement('a');
-        // downloadLink.href = screenShot;  // Set the href to the screenshot data URL
-        // downloadLink.download = `order_screenshot_${Date.now()}.png`;  // Set the filename
-        // downloadLink.click();
+        const downloadLink = document.createElement('a');
+        downloadLink.href = screenShot;  // Set the href to the screenshot data URL
+        downloadLink.download = `order_screenshot_${Date.now()}.png`;  // Set the filename
+        downloadLink.click();
 
         // Wait for the order to be created
         const order = await OrderService.create({
@@ -128,10 +146,19 @@ export default {
         });
 
         if (order) {
-          window.parent.postMessage({ status: "success", data: order }, '*');
+          window.parent.postMessage({action: 'redirect', data: order}, '*');
           this.orderModal = false;
           this.loading = false;
           this.orderCreatedModal = true;
+
+          if (active) {
+            active.set({
+              borderColor: '#3474d4',
+              cornerColor: '#3474d4',
+            });
+
+            Context.canvas.renderAll();
+          }
         }
       } catch (error) {
         this.loading = false;

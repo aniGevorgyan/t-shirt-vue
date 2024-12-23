@@ -2,7 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
       <q-page class="main-content">
-        <div class="row">
+        <div class="row" ref="mainBlock">
           <div class="layers-panel sm-full-width">
             <LayersPanel/>
           </div>
@@ -21,9 +21,8 @@
                          left: (ifSideMode() ? 0 : selectedModelCoordinated?.left) + 'px',
                          backgroundColor: ifSideMode() ? selectedModelColor?.hex : null,
                        }">
-                    <canvas
-                        :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066', borderRadius: '5px'} : {}"
-                        ref="canvas"></canvas>
+                    <canvas ref="canvas"></canvas>
+<!--                        :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066'} : {}"-->
                   </div>
                   <div class="canvas-block-2" :style="
                        {
@@ -80,6 +79,12 @@ export default {
     ControlsPanel,
     ModeSelector,
     InitModal,
+  },
+
+  data() {
+    return {
+      containerHeight: 0,
+    };
   },
 
   mounted() {
@@ -147,6 +152,10 @@ export default {
         CanvasService.removeLayer(this.selectedLayer);
       }
     });
+
+    this.resizeObserver = new ResizeObserver(this.handleResize);
+    this.resizeObserver.observe(this.$refs.mainBlock);
+    this.containerHeight = this.$refs.mainBlock.clientHeight;
 
     WebFont.load(WebFontConfig);
   },
@@ -225,6 +234,15 @@ export default {
 
       if (models[0].images[0].right_side) {
         return this.setMode('right_side')
+      }
+    },
+
+    handleResize(entries) {
+      for (const entry of entries) {
+        if (entry.target === this.$refs.mainBlock) {
+          this.containerHeight = entry.contentRect.height;
+          window.parent.postMessage({ action: 'resize', iframeHeight: this.containerHeight }, '*');
+        }
       }
     },
 
