@@ -100,39 +100,44 @@ export default {
     async createOrder() {
       this.loading = true;
       const element = document.getElementById("canvas-custom");
-      let screenShot = '';
       const url = new URL(window.location.href);
       const product_id = url.searchParams.get('product_id');
       const project_id = url.searchParams.get('project_id');
       this.resetSelectedLayer();
 
-      html2canvas(element, {useCORS: true})
-          .then((canvas) => {
-            screenShot = canvas.toDataURL("image/png");
+      try {
+        // Wait for the canvas to be generated
+        const canvas = await html2canvas(element, { useCORS: true });
+        const screenShot = canvas.toDataURL("image/png");
 
-            let order = OrderService.create({
-              title: "Order №" + Date.now(),
-              screenShot: screenShot,
-              productId: product_id,
-              projectId: project_id,
-              json: JSON.stringify({
-                model: this.selectedModelColor,
-                canvasData: CanvasService.toJSON(),
-              }),
-            });
+        // const downloadLink = document.createElement('a');
+        // downloadLink.href = screenShot;  // Set the href to the screenshot data URL
+        // downloadLink.download = `order_screenshot_${Date.now()}.png`;  // Set the filename
+        // downloadLink.click();
 
-            if (order) {
-              window.parent.postMessage({ status: "success", data: "Need to redirect!" }, '*');
-              this.orderModal = false;
-              this.loading = false;
-              this.orderCreatedModal = true;
-            }
-          })
-          .catch((error) => {
-            this.loading = false;
-            console.error("Error capturing screenshot:", error);
-          });
-    },
+        // Wait for the order to be created
+        const order = await OrderService.create({
+          title: "Order №" + Date.now(),
+          screenShot: screenShot,
+          productId: product_id,
+          projectId: project_id,
+          json: JSON.stringify({
+            model: this.selectedModelColor,
+            canvasData: CanvasService.toJSON(),
+          }),
+        });
+
+        if (order) {
+          window.parent.postMessage({ status: "success", data: order }, '*');
+          this.orderModal = false;
+          this.loading = false;
+          this.orderCreatedModal = true;
+        }
+      } catch (error) {
+        this.loading = false;
+        console.error("Error capturing screenshot or creating order:", error);
+      }
+    }
   },
 };
 </script>
