@@ -122,14 +122,14 @@ export default {
             });
 
             if (order) {
+              window.parent.postMessage({ status: "success", data: "Need to redirect!" }, '*');
               this.orderModal = false;
+              this.loading = false;
               this.orderCreatedModal = true;
             }
-
-            this.loading = false;
-            console.log("post data", order);
           })
           .catch((error) => {
+            this.loading = false;
             console.error("Error capturing screenshot:", error);
           });
     },
