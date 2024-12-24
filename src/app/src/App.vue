@@ -83,7 +83,7 @@ export default {
 
   data() {
     return {
-      containerHeight: 0,
+      resizeObserver: null,
     };
   },
 
@@ -153,11 +153,30 @@ export default {
       }
     });
 
-    this.resizeObserver = new ResizeObserver(this.handleResize);
-    this.resizeObserver.observe(this.$refs.mainBlock);
-    this.containerHeight = this.$refs.mainBlock.clientHeight;
+    const observedElement = this.$refs.mainBlock;
+
+    if (observedElement) {
+      // Initialize ResizeObserver
+      this.resizeObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          const height = entry.contentRect.height;
+          this.handleHeight(height);
+        }
+      });
+
+      // Start observing
+      this.resizeObserver.observe(observedElement);
+    }
 
     WebFont.load(WebFontConfig);
+  },
+
+  beforeUnmount() {
+    // Clean up the observer
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
   },
 
   computed: {
@@ -205,6 +224,11 @@ export default {
       }
     },
 
+    handleHeight(height) {
+      console.log("iframe height ---------------- ", height);
+      window.parent.postMessage({ action: 'resize', iframeHeight: height }, '*')
+    },
+
     ifSideMode() {
       return this.mode === 'left_side' || this.mode === 'right_side';
     },
@@ -242,25 +266,6 @@ export default {
       if (models[0].images[0].right_side) {
         return this.setMode('right_side')
       }
-    },
-
-    handleResize(entries) {
-      for (const entry of entries) {
-        if (entry.target === this.$refs.mainBlock) {
-          this.containerHeight = entry.contentRect.height;
-          window.parent.postMessage({ action: 'resize', iframeHeight: this.containerHeight }, '*');
-        }
-      }
-    },
-
-    async logout() {
-      await UserService.logout();
-      window.location.reload();
-    },
-
-    setLanguage(lang) {
-      this.$i18n.locale = lang;
-      syncLanguage(lang);
     },
   },
 };
@@ -306,12 +311,6 @@ export default {
   }
   @media (max-width: $breakpoint-sm) {
     padding-top: 50px;
-  }
-}
-
-.main-content {
-  @media (max-width: $breakpoint-sm) {
-    padding: 15px;
   }
 }
 
