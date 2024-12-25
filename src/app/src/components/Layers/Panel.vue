@@ -8,7 +8,7 @@
     align="justify"
   >
     <q-tab name="layers" :label="$t('label.layers')" />
-    <q-tab name="images" :label="$t('label.files')" />
+<!--    <q-tab name="images" :label="$t('label.files')" />-->
   </q-tabs>
 
   <q-tab-panels v-model="tab" animated>

@@ -7,6 +7,7 @@ import MediaService from "@/services/media";
 export const Context = {
     canvas: null,
     canvas2: null,
+    canvasMode: 'add',
 };
 
 class CanvasService {

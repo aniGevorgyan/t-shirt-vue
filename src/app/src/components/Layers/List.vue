@@ -24,7 +24,7 @@
     />
   </div>
 
-  <q-list bordered separator class="scroll-area">
+  <q-list separator>
     <template v-for="layer in layers" :key="layer.layerId">
       <LayerItem :layer="layer" v-if="layer.mode == mode" />
     </template>

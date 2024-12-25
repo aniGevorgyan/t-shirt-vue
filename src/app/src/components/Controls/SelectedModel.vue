@@ -41,7 +41,7 @@
               :src="svgPath"
               alt="Custom Icon"
               style="width: 20px; height: 20px; margin-right: 8px;"/>
-          <span>Add to Card</span>
+          <span>{{ifCanvasEditMode() ? 'Update' : 'Add to Card'}}</span>
         </q-btn>
         <LoadingItem v-if="loading"/>
       </div>
@@ -103,6 +103,10 @@ export default {
 
     getMode() {
       return this.mode;
+    },
+
+    ifCanvasEditMode() {
+      return Context.canvasMode === 'edit';
     },
 
     async createOrder() {

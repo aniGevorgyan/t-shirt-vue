@@ -246,6 +246,7 @@ export default {
 
       if (models[0]?.canvas) {
         let data = JSON.parse(models[0]?.canvas.json);
+        this.ctx.canvasMode = 'edit';
         CanvasService.loadFromJSON(data.canvasData, () => {
           CanvasService.changeMode();
         });
@@ -275,7 +276,6 @@ export default {
 .canvas-designer {
   //box-shadow: 0 0 5px #d9d9d9;
   position: sticky;
-  top: 55px;
   display: flex;
   gap: 10px;
 
@@ -307,7 +307,7 @@ export default {
   }
 
   @media (min-width: $breakpoint-sm) {
-    margin: 0 10px;
+    margin: 50px 10px 0 10px;
   }
   @media (max-width: $breakpoint-sm) {
     padding-top: 50px;
@@ -315,7 +315,7 @@ export default {
 }
 
 .layers-panel, .control-panel  {
-  width: 335px;
+  width: 325px;
 
   @media (max-width: $breakpoint-sm) {
     width: 100%;

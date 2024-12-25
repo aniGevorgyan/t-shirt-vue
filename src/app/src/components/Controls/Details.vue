@@ -141,6 +141,60 @@
           />
         </div>
 
+        <div class="row">
+          <div class="col-sm-4">
+            <p class="text-subtitle1 q-mt-md">
+              Color
+            </p>
+
+            <div class="q-mb-md">
+              <q-icon
+                  :style="{cursor: 'pointer'}"
+                  name="palette" size="34px"
+                  color="primary"
+                  @click="openPalette = !openPalette"/>
+              <q-popup-proxy v-if="openPalette"
+                             transition-show="scale"
+                             transition-hide="scale"
+                             @hide="openPalette=false">
+                <q-color
+                    v-model="selectedLayer.fill"
+                    no-footer
+                    no-header-tabs
+                />
+              </q-popup-proxy>
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <p class="text-subtitle1 q-mt-md">
+              {{ $t("label.fontStyle") }}
+            </p>
+            <q-btn-group push spread>
+              <q-btn
+                  push
+                  icon="format_bold"
+                  text-color="primary"
+                  @click="setBold"
+                  :class="{ 'bg-primary text-white': isBold() }"
+              />
+              <q-btn
+                  push
+                  icon="format_italic"
+                  text-color="primary"
+                  @click="setItalic"
+                  :class="{ 'bg-primary text-white': isItalic() }"
+              />
+              <q-btn
+                  push
+                  icon="format_underlined"
+                  text-color="primary"
+                  @click="setBoolProp('underline')"
+                  :class="{ 'bg-primary text-white': selectedLayer.underline }"
+              />
+            </q-btn-group>
+          </div>
+        </div>
+
         <p class="text-subtitle1">
           {{ $t("label.text") }}
         </p>
@@ -151,30 +205,6 @@
           :rows="3"
           input-class="layer-text-field"
         />
-
-        <p class="text-subtitle1 q-mt-md">
-          {{ $t("label.fontStyle") }}
-        </p>
-        <q-btn-group push spread>
-          <q-btn
-            push
-            icon="format_bold"
-            @click="setBold"
-            :class="{ 'bg-primary text-white': isBold() }"
-          />
-          <q-btn
-            push
-            icon="format_italic"
-            @click="setItalic"
-            :class="{ 'bg-primary text-white': isItalic() }"
-          />
-          <q-btn
-            push
-            icon="format_underlined"
-            @click="setBoolProp('underline')"
-            :class="{ 'bg-primary text-white': selectedLayer.underline }"
-          />
-        </q-btn-group>
 
         <p class="text-subtitle1 q-mt-md">
           {{ $t("label.fontFamily") }}
@@ -194,13 +224,6 @@
             </q-item>
           </template>
         </q-select>
-
-        <q-color
-          v-model="selectedLayer.fill"
-          no-header-tabs
-          no-footer
-          class="q-mt-md color-picker"
-        />
       </template>
     </template>
 
@@ -226,6 +249,7 @@ export default {
   data: () => ({
     fonts: AvailableFontFamilies,
     scale: 1,
+    openPalette: false,
   }),
 
   computed: {
