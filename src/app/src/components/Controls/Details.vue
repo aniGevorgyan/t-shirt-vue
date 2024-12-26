@@ -3,81 +3,81 @@
     <template v-if="selectedLayer.layerId">
       <q-btn-group push spread>
         <q-btn
-          push
-          icon="vertical_align_center"
-          @click="selectedLayer.centerH()"
-          class="q-px-none icon-rotate-90"
+            push
+            icon="vertical_align_center"
+            @click="selectedLayer.centerH()"
+            class="q-px-none icon-rotate-90"
         >
           <q-tooltip
-            class="bg-blue-8 text-body2"
-            anchor="top middle"
-            self="bottom middle"
-            :offset="[10, 10]"
+              class="bg-blue-8 text-body2"
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
           >
             {{ $t("label.centerVertically") }}
           </q-tooltip>
         </q-btn>
         <q-btn
-          push
-          icon="vertical_align_center"
-          @click="selectedLayer.centerV()"
-          class="q-px-none"
+            push
+            icon="vertical_align_center"
+            @click="selectedLayer.centerV()"
+            class="q-px-none"
         >
           <q-tooltip
-            class="bg-blue-8 text-body2"
-            anchor="top middle"
-            self="bottom middle"
-            :offset="[10, 10]"
+              class="bg-blue-8 text-body2"
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
           >
             {{ $t("label.centerHorizontally") }}
           </q-tooltip>
         </q-btn>
         <q-btn push icon="flip" @click="setBoolProp('flipX')" class="q-px-none">
           <q-tooltip
-            class="bg-blue-8 text-body2"
-            anchor="top middle"
-            self="bottom middle"
-            :offset="[10, 10]"
+              class="bg-blue-8 text-body2"
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
           >
             {{ $t("label.flipHorizontally") }}
           </q-tooltip>
         </q-btn>
         <q-btn
-          push
-          icon="flip"
-          @click="setBoolProp('flipY')"
-          class="q-px-none icon-rotate-90"
+            push
+            icon="flip"
+            @click="setBoolProp('flipY')"
+            class="q-px-none icon-rotate-90"
         >
           <q-tooltip
-            class="bg-blue-8 text-body2"
-            anchor="top middle"
-            self="bottom middle"
-            :offset="[10, 10]"
+              class="bg-blue-8 text-body2"
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
           >
             {{ $t("label.flipVertically") }}
           </q-tooltip>
         </q-btn>
         <q-btn push icon="move_up" @click="bringToFront" class="q-px-none">
           <q-tooltip
-            class="bg-blue-8 text-body2"
-            anchor="top middle"
-            self="bottom middle"
-            :offset="[10, 10]"
+              class="bg-blue-8 text-body2"
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
           >
             {{ $t("label.layerUp") }}
           </q-tooltip>
         </q-btn>
         <q-btn
-          push
-          icon="move_up"
-          @click="sendToBack"
-          class="q-px-none icon-rotate-180"
+            push
+            icon="move_up"
+            @click="sendToBack"
+            class="q-px-none icon-rotate-180"
         >
           <q-tooltip
-            class="bg-blue-8 text-body2"
-            anchor="top middle"
-            self="bottom middle"
-            :offset="[10, 10]"
+              class="bg-blue-8 text-body2"
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
           >
             {{ $t("label.layerDown") }}
           </q-tooltip>
@@ -93,29 +93,29 @@
       </p>
       <div class="q-px-sm">
         <q-slider
-          v-model="selectedLayer.angle"
-          :min="0"
-          :max="360"
-          :step="1"
-          label
-          label-always
-          :markers="90"
-          :marker-labels="[
+            v-model="selectedLayer.angle"
+            :min="0"
+            :max="360"
+            :step="1"
+            label
+            label-always
+            :markers="90"
+            :marker-labels="[
             { value: 0, label: '0' },
             { value: 90, label: '90' },
             { value: 180, label: '180' },
             { value: 270, label: '270' },
             { value: 360, label: '360' },
           ]"
-          color="primary"
+            color="primary"
         >
           <template v-slot:marker-label-group="scope">
             <div class="slider-markers">
               <div
-                v-for="marker in scope.markerList"
-                :key="marker.index"
-                :class="`marker-${marker.value}`"
-                @click="selectedLayer.angle = marker.value"
+                  v-for="marker in scope.markerList"
+                  :key="marker.index"
+                  :class="`marker-${marker.value}`"
+                  @click="selectedLayer.angle = marker.value"
               >
                 {{ marker.value }}
               </div>
@@ -130,19 +130,19 @@
         </p>
         <div class="q-px-sm">
           <q-slider
-            v-model="scale"
-            :min="0"
-            :max="5"
-            :step="0.1"
-            label
-            label-always
-            :label-value="getFontSize()"
-            color="primary"
+              v-model="scale"
+              :min="0"
+              :max="5"
+              :step="0.1"
+              label
+              label-always
+              :label-value="getFontSize()"
+              color="primary"
           />
         </div>
 
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-xs-4">
             <p class="text-subtitle1 q-mt-md">
               Color
             </p>
@@ -153,19 +153,16 @@
                   name="palette" size="34px"
                   color="primary"
                   @click="openPalette = !openPalette"/>
-              <q-popup-proxy v-if="openPalette"
-                             transition-show="scale"
-                             transition-hide="scale"
-                             @hide="openPalette=false">
+              <q-menu v-if="openPalette" self="top left" anchor="bottom left" @hide="openPalette=false">
                 <q-color
                     v-model="selectedLayer.fill"
                     no-footer
                     no-header-tabs
                 />
-              </q-popup-proxy>
+              </q-menu>
             </div>
           </div>
-          <div class="col-sm-8">
+          <div class="col-xs-8">
             <p class="text-subtitle1 q-mt-md">
               {{ $t("label.fontStyle") }}
             </p>
@@ -199,20 +196,20 @@
           {{ $t("label.text") }}
         </p>
         <q-input
-          filled
-          v-model="selectedLayer.text"
-          type="textarea"
-          :rows="3"
-          input-class="layer-text-field"
+            filled
+            v-model="selectedLayer.text"
+            type="textarea"
+            :rows="3"
+            input-class="layer-text-field"
         />
 
         <p class="text-subtitle1 q-mt-md">
           {{ $t("label.fontFamily") }}
         </p>
         <q-select
-          filled
-          v-model="selectedLayer.fontFamily"
-          :options="['Roboto', ...fonts]"
+            filled
+            v-model="selectedLayer.fontFamily"
+            :options="['Roboto', ...fonts]"
         >
           <template v-slot:option="scope">
             <q-item v-bind="scope.itemProps">
@@ -236,8 +233,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { AvailableFontFamilies } from "@/WebFontConfig";
+import {mapState} from "vuex";
+import {AvailableFontFamilies} from "@/WebFontConfig";
 
 import CanvasService from "@/services/canvas";
 
@@ -315,14 +312,14 @@ export default {
     },
     getFontSize() {
       return (
-        parseInt(
-          this.ctx.canvas.getActiveObject().scaleX * CanvasService.fontSize,
-        ) + "px"
+          parseInt(
+              this.ctx.canvas.getActiveObject().scaleX * CanvasService.fontSize,
+          ) + "px"
       );
     },
     syncToCanvas2() {
       const json = this.ctx.canvas.toJSON();
-      this.ctx.canvas2.loadFromJSON(json, this.ctx.canvas2.renderAll.bind(this.ctx.canvas2), function(o, object) {
+      this.ctx.canvas2.loadFromJSON(json, this.ctx.canvas2.renderAll.bind(this.ctx.canvas2), function (o, object) {
         object.set('selectable', false);
       });
     },
@@ -331,36 +328,49 @@ export default {
 </script>
 
 <style lang="scss">
+.relative-container {
+  position: relative;
+}
+
 .icon-rotate-90 i {
   transform: rotate(90deg) !important;
 }
+
 .icon-rotate-180 i {
   transform: rotate(180deg) !important;
 }
+
 .color-picker {
   max-width: 100% !important;
 }
+
 .slider-markers {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   div {
     position: relative;
     cursor: pointer;
     font-size: 11px;
   }
+
   .marker-0 {
     left: -1px;
   }
+
   .marker-90 {
     left: 7px;
   }
+
   .marker-180 {
     left: 11px;
   }
+
   .marker-270 {
     left: 11px;
   }
+
   .marker-360 {
     left: 10px;
   }
