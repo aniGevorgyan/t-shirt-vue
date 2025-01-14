@@ -198,10 +198,10 @@ export default {
 
   .color {
     cursor: pointer;
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
-    border: 3px solid #FFF;
+    border: 2px solid #FFF;
     box-shadow: 0 0 0 1px #ccc;
     position: relative;
 

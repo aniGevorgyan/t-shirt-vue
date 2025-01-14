@@ -31,14 +31,16 @@ class CanvasService {
             originY: "center",
             borderColor: "#3474d4",
             cornerColor: "#3474d4",
+            borderDashArray: [5, 5],
             strokeWidth: 20,
-            cornerSize: 15,
-            transparentCorners: false,
+            cornerSize: 10,
+            // transparentCorners: false,
             _controlsVisibility: {
                 mt: false,
                 mb: false,
                 ml: false,
                 mr: false,
+                mtr: false,
             },
         });
         Context.canvas.add(textLayer);
@@ -56,9 +58,10 @@ class CanvasService {
                     mode: store.state.canvas.mode,
                     borderColor: "#3474d4",
                     cornerColor: "#3474d4",
+                    borderDashArray: [5, 5],
                     strokeWidth: 20,
-                    cornerSize: 15,
-                    transparentCorners: false,
+                    cornerSize: 10,
+                    // transparentCorners: false,
                     _controlsVisibility: {
                         mt: false,
                         mb: false,

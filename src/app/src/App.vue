@@ -1,11 +1,8 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-page-container>
-      <q-page class="main-content">
-        <div class="row" ref="mainBlock">
-          <div class="layers-panel sm-full-width">
-            <LayersPanel/>
-          </div>
+      <q-page>
+        <div class="row main-content" ref="mainBlock">
           <div class="canvas-column">
             <div class="canvas-designer">
               <ModeSelector/>
@@ -54,16 +51,13 @@ import {mapState} from "vuex";
 import {mapGetters} from "vuex";
 import {mapMutations} from "vuex";
 import {fabric} from "fabric";
-import {syncLanguage} from "./locales";
 
-import UserService from "@/services/user";
 import CanvasService from "@/services/canvas";
 import ProductService from "@/services/product";
 
 import WebFont from "webfontloader";
 import WebFontConfig from "@/WebFontConfig";
 
-import LayersPanel from "@/components/Layers/Panel";
 import ModeSelector from "@/components/Controls/ModeSelector";
 import ControlsPanel from "@/components/Controls/Panel";
 
@@ -75,7 +69,6 @@ export default {
   inject: ["ctx"],
 
   components: {
-    LayersPanel,
     ControlsPanel,
     ModeSelector,
     InitModal,
@@ -273,6 +266,10 @@ export default {
 </script>
 
 <style lang="scss">
+
+.main-content {
+  justify-content: center;
+}
 .canvas-designer {
   //box-shadow: 0 0 5px #d9d9d9;
   position: sticky;
@@ -315,7 +312,7 @@ export default {
 }
 
 .layers-panel, .control-panel  {
-  width: 325px;
+  width: 500px;
 
   @media (max-width: $breakpoint-sm) {
     width: 100%;
