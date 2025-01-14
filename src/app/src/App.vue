@@ -218,7 +218,6 @@ export default {
     },
 
     handleHeight(height) {
-      console.log("iframe height ---------------- ", height);
       window.parent.postMessage({ action: 'resize', iframeHeight: height }, '*')
     },
 

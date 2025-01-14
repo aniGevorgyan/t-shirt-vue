@@ -32,17 +32,19 @@ class CanvasService {
             borderColor: "#3474d4",
             cornerColor: "#3474d4",
             borderDashArray: [5, 5],
-            strokeWidth: 20,
-            cornerSize: 10,
             // transparentCorners: false,
             _controlsVisibility: {
                 mt: false,
                 mb: false,
                 ml: false,
                 mr: false,
+                bl: false,
+                tr: false,
                 mtr: false,
             },
         });
+        this.customizeResizeControl();
+        this.customizeRotateControl(Context.canvas);
         Context.canvas.add(textLayer);
         Context.canvas.setActiveObject(textLayer);
         Context.canvas.renderAll();
@@ -67,10 +69,15 @@ class CanvasService {
                         mb: false,
                         ml: false,
                         mr: false,
+                        bl: false,
+                        tr: false,
+                        mtr: false,
                     },
                 });
-                var imageWidth = Context.canvas.getWidth() * 0.35;
+                var imageWidth = Context.canvas.getWidth() * 0.5;
                 imageLayer.scaleToWidth(imageWidth);
+                this.customizeResizeControl();
+                this.customizeRotateControl(Context.canvas);
                 Context.canvas.add(imageLayer);
                 Context.canvas.centerObject(imageLayer);
                 imageLayer.setCoords();
@@ -81,6 +88,53 @@ class CanvasService {
                 crossOrigin: "anonymous",
             },
         );
+    }
+
+    static customizeResizeControl() {
+        // Custom icon URL (replace this with your icon's URL)
+        const customIconUrl = "https://img.icons8.com/ios/50/000000/resize-diagonal.png";
+
+        // Create an image element for the custom icon
+        fabric.Object.prototype.controls.mtr.visible = false; // Hide default rotate control
+        const customResizeIcon = document.createElement("img");
+        customResizeIcon.src = customIconUrl;
+
+        // Customize the bottom-right corner control
+        fabric.Object.prototype.controls.br = new fabric.Control({
+            x: 0.5,
+            y: 0.5,
+            offsetX: 0,
+            offsetY: 0,
+            cursorStyle: "nwse-resize",
+            actionHandler: fabric.controlsUtils.scalingEqually,
+            render: function (ctx, left, top, styleOverride, fabricObject) {
+                const size = 24; // Custom icon size
+                ctx.drawImage(customResizeIcon, left - size / 2, top - size / 2, size, size);
+            },
+        });
+    }
+
+    static customizeRotateControl(canvas) {
+        // Custom icon URL for the rotate control (replace with your icon URL)
+        const rotateIconUrl = "https://img.icons8.com/ios/50/000000/rotate.png";
+
+        // Create an image element for the custom icon
+        const rotateIcon = document.createElement("img");
+        rotateIcon.src = rotateIconUrl;
+
+        // Customize the top-left rotate control
+        fabric.Object.prototype.controls.tl = new fabric.Control({
+            x: -0.5,
+            y: -0.5,
+            offsetX: 0,
+            offsetY: 0,
+            cursorStyle: "rotate", // Cursor changes to indicate rotation
+            actionHandler: fabric.controlsUtils.rotationWithSnapping,
+            render: function (ctx, left, top, styleOverride, fabricObject) {
+                const size = 24; // Custom icon size
+                ctx.drawImage(rotateIcon, left - size / 2, top - size / 2, size, size);
+            },
+        });
     }
 
     static changeMode() {

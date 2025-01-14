@@ -8,8 +8,8 @@
     indicator-color="primary"
     align="justify"
   >
-    <q-tab name="product" icon="crop_original" :label="$t('label.product')" />
-    <q-tab name="layers" icon="crop_original" :label="$t('label.layers')" />
+    <q-tab name="product" icon="invert_colors" :label="$t('label.product')" />
+    <q-tab name="layers" icon="layers" :label="$t('label.layers')" />
     <q-tab name="object" icon="tune" :label="$t('label.object')" />
   </q-tabs>
 

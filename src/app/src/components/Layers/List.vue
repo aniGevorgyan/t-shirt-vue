@@ -5,17 +5,23 @@
       @click="addTextLayer"
       color="white"
       text-color="black"
-      icon="add"
-      :label="$t('label.text')"
-      class="q-mr-sm"
-    />
+      class="q-mr-sm">
+      <q-img
+          :src="textSvgPath"
+          alt="Custom Icon"
+          style="width: 40px; height: 40px; margin-right: 3px;"/>
+      <p class="layers-tab-text">Add <br/> Text</p>
+    </q-btn>
     <q-btn
       no-caps
       @click="this.$refs.fileInput.click()"
-      color="primary"
-      icon="file_upload"
-      :label="$t('label.image')"
-    />
+      color="primary">
+      <q-img
+          :src="imagesSvgPath"
+          alt="Custom Icon"
+          style="width: 35px; height: 35px; margin-right: 10px;"/>
+      <p class="layers-tab-text">Add <br/> Images</p>
+    </q-btn>
     <input
       ref="fileInput"
       type="file"
@@ -54,6 +60,8 @@ export default {
   data: () => ({
     tab: "layers",
     loadingLayer: false,
+    textSvgPath: require('@/assets/text.svg'),
+    imagesSvgPath: require('@/assets/images.svg'),
   }),
 
   computed: {
@@ -106,5 +114,12 @@ export default {
   @media (max-width: $breakpoint-xs) {
     min-height: 100px;
   }
+}
+
+.layers-tab-text {
+  margin: 5px 0;
+  display: flex;
+  line-height: 18px;
+  text-align: initial;
 }
 </style>

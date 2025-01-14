@@ -5,7 +5,7 @@
     </q-card-section>
 
     <q-card-section>
-      <p class="text-subtitle1">{{ $t("label.color") }}</p>
+      <p class="text-subtitle1">Available in {{selectedModel.images.length}} colors</p>
       <q-card-actions class="colors">
         <div
           v-for="image in selectedModel.images"
