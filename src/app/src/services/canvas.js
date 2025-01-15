@@ -2,8 +2,6 @@ import {store} from "@/store";
 import {fabric} from "fabric";
 import {cloneProxy} from "../utils";
 
-import MediaService from "@/services/media";
-
 export const Context = {
     canvas: null,
     canvas2: null,
@@ -11,8 +9,15 @@ export const Context = {
 };
 
 class CanvasService {
-    static fontSize = 16;
+    static fontSize = 22;
     static scale = 1;
+
+    static cleanup() {
+        if (this.timeoutId) {
+            clearTimeout(this.timeoutId);
+            this.timeoutId = null;
+        }
+    }
 
     static addTextLayer(text = "Yans Print") {
         let center = Context.canvas.getCenter();
@@ -29,6 +34,7 @@ class CanvasService {
             left: center.left,
             originX: "center",
             originY: "center",
+            strokeWidth: 20,
             borderColor: "#3474d4",
             cornerColor: "#3474d4",
             borderDashArray: [5, 5],
@@ -38,16 +44,19 @@ class CanvasService {
                 mb: false,
                 ml: false,
                 mr: false,
-                bl: false,
                 tr: false,
-                mtr: false,
             },
         });
         this.customizeResizeControl();
         this.customizeRotateControl(Context.canvas);
+        this.customizeDeleteControl(Context.canvas);
         Context.canvas.add(textLayer);
         Context.canvas.setActiveObject(textLayer);
-        Context.canvas.renderAll();
+
+        this.cleanup();
+        this.timeoutId = setTimeout(() => {
+            Context.canvas.renderAll();
+        }, 0);
     }
 
     static addImageLayer(url) {
@@ -69,20 +78,27 @@ class CanvasService {
                         mb: false,
                         ml: false,
                         mr: false,
-                        bl: false,
                         tr: false,
-                        mtr: false,
                     },
                 });
-                var imageWidth = Context.canvas.getWidth() * 0.5;
-                imageLayer.scaleToWidth(imageWidth);
                 this.customizeResizeControl();
                 this.customizeRotateControl(Context.canvas);
+                this.customizeDeleteControl(Context.canvas);
+
+                var imageWidth = Context.canvas.getWidth() * 0.5;
+                imageLayer.scaleToWidth(imageWidth);
                 Context.canvas.add(imageLayer);
                 Context.canvas.centerObject(imageLayer);
+                imageLayer.originX = "center";
+                imageLayer.originY = "center";
+                imageLayer.left = Context.canvas.getWidth() / 2;
+                imageLayer.top = Context.canvas.getHeight() / 2;
                 imageLayer.setCoords();
                 Context.canvas.setActiveObject(imageLayer);
-                Context.canvas.renderAll();
+                this.cleanup();
+                this.timeoutId = setTimeout(() => {
+                    Context.canvas.renderAll();
+                }, 0);
             },
             {
                 crossOrigin: "anonymous",
@@ -92,10 +108,9 @@ class CanvasService {
 
     static customizeResizeControl() {
         // Custom icon URL (replace this with your icon's URL)
-        const customIconUrl = "https://img.icons8.com/ios/50/000000/resize-diagonal.png";
+        const customIconUrl = new URL('@/assets/scale.png', import.meta.url).href;
 
         // Create an image element for the custom icon
-        fabric.Object.prototype.controls.mtr.visible = false; // Hide default rotate control
         const customResizeIcon = document.createElement("img");
         customResizeIcon.src = customIconUrl;
 
@@ -116,14 +131,14 @@ class CanvasService {
 
     static customizeRotateControl(canvas) {
         // Custom icon URL for the rotate control (replace with your icon URL)
-        const rotateIconUrl = "https://img.icons8.com/ios/50/000000/rotate.png";
+        const rotateIconUrl = new URL('@/assets/rotate.png', import.meta.url).href;
 
         // Create an image element for the custom icon
         const rotateIcon = document.createElement("img");
         rotateIcon.src = rotateIconUrl;
 
         // Customize the top-left rotate control
-        fabric.Object.prototype.controls.tl = new fabric.Control({
+        fabric.Object.prototype.controls.mtr = new fabric.Control({
             x: -0.5,
             y: -0.5,
             offsetX: 0,
@@ -133,6 +148,43 @@ class CanvasService {
             render: function (ctx, left, top, styleOverride, fabricObject) {
                 const size = 24; // Custom icon size
                 ctx.drawImage(rotateIcon, left - size / 2, top - size / 2, size, size);
+            },
+        });
+    }
+
+    static customizeDeleteControl(canvas) {
+        // Custom delete icon URL (replace this with your delete icon URL)
+        const deleteIconUrl = new URL('@/assets/remove.png', import.meta.url).href;
+
+        // Create an image element for the custom icon
+        const deleteIcon = document.createElement("img");
+        deleteIcon.src = deleteIconUrl;
+
+        // Customize the bottom-left corner control for deletion
+        fabric.Object.prototype.controls.bl = new fabric.Control({
+            x: -0.5,
+            y: 0.5,
+            offsetX: 0,
+            offsetY: 0,
+            cursorStyle: "pointer", // Cursor changes to indicate interaction
+            mouseDownHandler: (eventData, transform, x, y) => {
+                const target = transform.target;
+                if (target) {
+                    canvas.remove(target); // Remove the object from the canvas
+                    canvas.discardActiveObject();
+                    canvas.renderAll();
+                }
+                return true; // Stop further event handling
+            },
+            render: function (ctx, left, top, styleOverride, fabricObject) {
+                const iconSize = 24; // Custom icon size
+                ctx.drawImage(
+                    deleteIcon,
+                    left - iconSize / 2,
+                    top - iconSize / 2,
+                    iconSize,
+                    iconSize
+                );
             },
         });
     }
