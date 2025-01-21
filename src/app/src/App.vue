@@ -311,9 +311,10 @@ export default {
   }
 }
 
-.layers-panel, .control-panel  {
+.control-panel  {
   width: calc(100% - 700px);
   max-width: 500px;
+  min-height: 725px;
 
   @media (max-width: $breakpoint-sm) {
     width: 100%;

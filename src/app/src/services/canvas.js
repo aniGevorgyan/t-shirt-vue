@@ -56,7 +56,7 @@ class CanvasService {
         this.cleanup();
         this.timeoutId = setTimeout(() => {
             Context.canvas.renderAll();
-        }, 0);
+        }, 100);
     }
 
     static addImageLayer(url) {
@@ -98,7 +98,7 @@ class CanvasService {
                 this.cleanup();
                 this.timeoutId = setTimeout(() => {
                     Context.canvas.renderAll();
-                }, 0);
+                }, 100);
             },
             {
                 crossOrigin: "anonymous",
@@ -120,7 +120,7 @@ class CanvasService {
             y: 0.5,
             offsetX: 0,
             offsetY: 0,
-            cursorStyle: "nwse-resize",
+            cursorStyle: "grab",
             actionHandler: fabric.controlsUtils.scalingEqually,
             render: function (ctx, left, top, styleOverride, fabricObject) {
                 const size = 24; // Custom icon size
@@ -143,7 +143,7 @@ class CanvasService {
             y: -0.5,
             offsetX: 0,
             offsetY: 0,
-            cursorStyle: "rotate", // Cursor changes to indicate rotation
+            cursorStyle: "grab",
             actionHandler: fabric.controlsUtils.rotationWithSnapping,
             render: function (ctx, left, top, styleOverride, fabricObject) {
                 const size = 24; // Custom icon size
@@ -265,9 +265,19 @@ class CanvasService {
         ]);
     }
 
-    static loadFromJSON(data, callback = () => {
-    }) {
-        Context.canvas.loadFromJSON(data, callback);
+    static loadFromJSON(data, callback = () => {}) {
+        Context.canvas.loadFromJSON(data, () => {
+            Context.canvas.getObjects().forEach((object) => {
+                if (object.type === 'text' || object.type === 'image') {
+                    this.customizeResizeControl();
+                    this.customizeRotateControl(Context.canvas);
+                    this.customizeDeleteControl(Context.canvas);
+                }
+            });
+
+            Context.canvas.renderAll();
+            callback();
+        });
     }
 
     static deleteAllLayers() {
