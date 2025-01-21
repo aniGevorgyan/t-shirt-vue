@@ -307,11 +307,13 @@ export default {
   }
   @media (max-width: $breakpoint-sm) {
     padding-top: 50px;
+    justify-content: center;
   }
 }
 
 .layers-panel, .control-panel  {
-  width: 500px;
+  width: calc(100% - 700px);
+  max-width: 500px;
 
   @media (max-width: $breakpoint-sm) {
     width: 100%;

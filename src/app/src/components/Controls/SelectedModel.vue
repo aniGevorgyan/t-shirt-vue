@@ -120,11 +120,7 @@ export default {
         let active = Context.canvas.getActiveObject();
 
         if (active) {
-          active.set({
-            borderColor: 'transparent',
-            cornerColor: 'transparent',
-          });
-
+          Context.canvas.discardActiveObject();
           Context.canvas.renderAll();
         }
 
@@ -154,15 +150,6 @@ export default {
           this.orderModal = false;
           this.loading = false;
           this.orderCreatedModal = true;
-
-          if (active) {
-            active.set({
-              borderColor: '#3474d4',
-              cornerColor: '#3474d4',
-            });
-
-            Context.canvas.renderAll();
-          }
         }
       } catch (error) {
         this.loading = false;
