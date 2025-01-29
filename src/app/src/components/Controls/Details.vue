@@ -57,31 +57,31 @@
             {{ $t("label.flipVertically") }}
           </q-tooltip>
         </q-btn>
-        <q-btn push icon="move_up" @click="bringToFront" class="q-px-none">
-          <q-tooltip
-              class="bg-blue-8 text-body2"
-              anchor="top middle"
-              self="bottom middle"
-              :offset="[10, 10]"
-          >
-            {{ $t("label.layerUp") }}
-          </q-tooltip>
-        </q-btn>
-        <q-btn
-            push
-            icon="move_up"
-            @click="sendToBack"
-            class="q-px-none icon-rotate-180"
-        >
-          <q-tooltip
-              class="bg-blue-8 text-body2"
-              anchor="top middle"
-              self="bottom middle"
-              :offset="[10, 10]"
-          >
-            {{ $t("label.layerDown") }}
-          </q-tooltip>
-        </q-btn>
+<!--        <q-btn push icon="move_up" @click="bringToFront" class="q-px-none">-->
+<!--          <q-tooltip-->
+<!--              class="bg-blue-8 text-body2"-->
+<!--              anchor="top middle"-->
+<!--              self="bottom middle"-->
+<!--              :offset="[10, 10]"-->
+<!--          >-->
+<!--            {{ $t("label.layerUp") }}-->
+<!--          </q-tooltip>-->
+<!--        </q-btn>-->
+<!--        <q-btn-->
+<!--            push-->
+<!--            icon="move_up"-->
+<!--            @click="sendToBack"-->
+<!--            class="q-px-none icon-rotate-180"-->
+<!--        >-->
+<!--          <q-tooltip-->
+<!--              class="bg-blue-8 text-body2"-->
+<!--              anchor="top middle"-->
+<!--              self="bottom middle"-->
+<!--              :offset="[10, 10]"-->
+<!--          >-->
+<!--            {{ $t("label.layerDown") }}-->
+<!--          </q-tooltip>-->
+<!--        </q-btn>-->
       </q-btn-group>
 
 <!--      <p class="text-subtitle1 q-pt-md q-mb-none">-->

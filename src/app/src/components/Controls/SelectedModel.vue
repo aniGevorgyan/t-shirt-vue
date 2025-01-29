@@ -29,22 +29,6 @@
           </div>
         </div>
       </q-card-actions>
-
-      <div class="row justify-center q-mt-md">
-        <q-btn
-          v-if="!loading"
-          no-caps
-          color="primary"
-          @click="createOrder"
-          :disabled="!canOrder()">
-          <q-img
-              :src="svgPath"
-              alt="Custom Icon"
-              style="width: 20px; height: 20px; margin-right: 8px;"/>
-          <span>{{ifCanvasEditMode() ? 'Update' : 'Add to Card'}}</span>
-        </q-btn>
-        <LoadingItem v-if="loading"/>
-      </div>
     </q-card-section>
   </q-card>
 </template>
@@ -55,21 +39,11 @@ import { mapActions } from "vuex";
 import { mapGetters } from "vuex";
 import { mapMutations } from "vuex";
 
-import OrderService from "@/services/order";
-import CanvasService, {Context} from "@/services/canvas";
-import LoadingItem from "@/components/Layers/Loading";
-import html2canvas from "html2canvas";
-
 export default {
   name: "SelectedModel",
-  components: {LoadingItem},
   data: () => ({
-    orderModal: false,
-    orderCreatedModal: false,
-    loading: false,
     phone: "",
     email: "",
-    svgPath: require('@/assets/cart.svg'),
   }),
 
   watch: {
@@ -97,65 +71,9 @@ export default {
     ]),
     ...mapActions("order", ["calculatePrice"]),
 
-    canOrder() {
-      return this.layers.length > 0;
-    },
-
     getMode() {
       return this.mode;
     },
-
-    ifCanvasEditMode() {
-      return Context.canvasMode === 'edit';
-    },
-
-    async createOrder() {
-      this.loading = true;
-      const url = new URL(window.location.href);
-      const product_id = url.searchParams.get('product_id');
-      const project_id = url.searchParams.get('project_id');
-      this.resetSelectedLayer();
-
-      try {
-        let active = Context.canvas.getActiveObject();
-
-        if (active) {
-          Context.canvas.discardActiveObject();
-          Context.canvas.renderAll();
-        }
-
-        const element = document.getElementById("canvas-custom");
-        const canvas = await html2canvas(element, {useCORS: true});
-        const screenShot = canvas.toDataURL("image/png");
-
-        // const downloadLink = document.createElement('a');
-        // downloadLink.href = screenShot;  // Set the href to the screenshot data URL
-        // downloadLink.download = `order_screenshot_${Date.now()}.png`;  // Set the filename
-        // downloadLink.click();
-
-        // Wait for the order to be created
-        const order = await OrderService.create({
-          title: "Order №" + Date.now(),
-          screenShot: screenShot,
-          productId: product_id,
-          projectId: project_id,
-          json: JSON.stringify({
-            model: this.selectedModelColor,
-            canvasData: CanvasService.toJSON(),
-          }),
-        });
-
-        if (order) {
-          window.parent.postMessage({action: 'redirect', data: order}, '*');
-          this.orderModal = false;
-          this.loading = false;
-          this.orderCreatedModal = true;
-        }
-      } catch (error) {
-        this.loading = false;
-        console.error("Error capturing screenshot or creating order:", error);
-      }
-    }
   },
 };
 </script>
