@@ -118,6 +118,26 @@ export default {
       this.syncToCanvas2();
     });
 
+
+    this.ctx.canvas.on("object:moving", (event) => {
+      let obj = event.target;
+      // if object is too big ignore
+      if(obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width){
+        return;
+      }
+      obj.setCoords();
+      // top-left  corner
+      if(obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0){
+        obj.top = Math.max(obj.top, obj.top-obj.getBoundingRect().top);
+        obj.left = Math.max(obj.left, obj.left-obj.getBoundingRect().left);
+      }
+      // bot-right corner
+      if(obj.getBoundingRect().top+obj.getBoundingRect().height  > obj.canvas.height || obj.getBoundingRect().left+obj.getBoundingRect().width  > obj.canvas.width){
+        obj.top = Math.min(obj.top, obj.canvas.height-obj.getBoundingRect().height+obj.top-obj.getBoundingRect().top);
+        obj.left = Math.min(obj.left, obj.canvas.width-obj.getBoundingRect().width+obj.left-obj.getBoundingRect().left);
+      }
+    });
+
     this.ctx.canvas.on({
       "object:added": () => {
         this.syncLayers(this.ctx.canvas.getObjects());
@@ -129,22 +149,22 @@ export default {
       },
     });
 
-    this.ctx.canvas.on("mouse:dblclick", ({target}) => {
-      if (target && target.type === 'image') {
-        CanvasService.prepareCrop(target)
-      }
-    })
+    // this.ctx.canvas.on("mouse:dblclick", ({target}) => {
+    //   if (target && target.type === 'image') {
+    //     CanvasService.prepareCrop(target)
+    //   }
+    // })
 
-    document.addEventListener("keydown", (e) => {
-      if (
-          ["Delete", "Backspace"].includes(e.key) &&
-          this.selectedLayer.layerId
-      ) {
-        if (document.querySelector(".layer-text-field")?.matches(":focus"))
-          return;
-        CanvasService.removeLayer(this.selectedLayer);
-      }
-    });
+    // document.addEventListener("keydown", (e) => {
+    //   if (
+    //       ["Delete", "Backspace"].includes(e.key) &&
+    //       this.selectedLayer.layerId
+    //   ) {
+    //     if (document.querySelector(".layer-text-field")?.matches(":focus"))
+    //       return;
+    //     CanvasService.removeLayer(this.selectedLayer);
+    //   }
+    // });
 
     const observedElement = this.$refs.mainBlock;
 

@@ -84,9 +84,9 @@
         </q-btn>
       </q-btn-group>
 
-      <p class="text-subtitle1 q-pt-md q-mb-none">
-        {{ $t("text.dblClickForCrop") }}
-      </p>
+<!--      <p class="text-subtitle1 q-pt-md q-mb-none">-->
+<!--        {{ $t("text.dblClickForCrop") }}-->
+<!--      </p>-->
 
       <p class="text-subtitle1 q-pt-md q-pb-md">
         {{ $t("label.rotate") }}
