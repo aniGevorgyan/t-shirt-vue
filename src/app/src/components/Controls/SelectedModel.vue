@@ -9,7 +9,7 @@
       <q-card-actions class="colors">
         <div
           v-for="image in selectedModel.images"
-          :key="image[getMode()].url"
+          :key="image[getMode()]?.url"
           @click="setSelectedModelColor(image)"
           class="cursor-pointer model-colors">
           <q-icon
@@ -17,7 +17,9 @@
             class="check-icon"
             name="check"
             size="20px"/>
-          <div class="color" :style="{ 'background': image.hex }" :class="{ 'active': selectedModelColor.id == image.id }">
+          <div class="color"
+               v-bind:style="{ backgroundImage: image.img ? `url('${image.img}')` : null, backgroundColor: image.hex }"
+               :class="{ 'active': selectedModelColor.id == image.id }">
             <q-tooltip
                 class="bg-blue-8 text-body2"
                 anchor="top middle"
@@ -108,6 +110,7 @@ export default {
     border-radius: 50%;
     border: 2px solid #FFF;
     box-shadow: 0 0 0 1px #ccc;
+    background-position: center;
     position: relative;
 
     &.active {
