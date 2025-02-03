@@ -34,7 +34,7 @@ class CanvasService {
             left: center.left,
             originX: "center",
             originY: "center",
-            strokeWidth: 20,
+            // strokeWidth: 20,
             borderColor: "#3474d4",
             cornerColor: "#3474d4",
             borderDashArray: [5, 5],
@@ -70,7 +70,7 @@ class CanvasService {
                     borderColor: "#3474d4",
                     cornerColor: "#3474d4",
                     borderDashArray: [5, 5],
-                    strokeWidth: 20,
+                    // strokeWidth: 20,
                     // cornerSize: 10,
                     // transparentCorners: false,
                     _controlsVisibility: {

@@ -9,10 +9,10 @@
               <div class="flex flex-center sm-overflow-scroll" id="canvas-custom">
                 <div class="canvas-wrapper"
                      v-bind:style="{ backgroundImage: selectedModelColorUrl ? `url('${selectedModelColorUrl}')` : null }">
-                  <div id="canvas-block" class="canvas-block" :class="{ lrSide: ifSideMode() }" :style="
+                  <div id="canvas-block" class="canvas-block" :style="
                        {
-                         height: selectedModelCoordinated?.height + 'px',
-                         width: selectedModelCoordinated?.width + 'px',
+                         height: selectedModelCoordinated?.height * ratio + 'px',
+                         width: selectedModelCoordinated?.width * ratio + 'px',
                          top: (ifSideMode() ? null : selectedModelCoordinated?.top + 'px'),
                          bottom: (ifSideMode() ? 0 : null),
                          left: (ifSideMode() ? 0 : selectedModelCoordinated?.left) + 'px',
@@ -21,11 +21,11 @@
                     <canvas ref="canvas"></canvas>
 <!--                        :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066'} : {}"-->
                   </div>
-                  <div class="canvas-block-2" :style="
+                  <div class="canvas-block-2" :class="{ lrSide: ifSideMode() }" :style="
                        {
                          visibility: ifSideMode() ? 'visible' : 'hidden',
-                         height: selectedModelCoordinated?.height + 'px',
-                         width: selectedModelCoordinated?.width + 'px',
+                         height: selectedModelCoordinated?.height*ratio + 'px',
+                         width: selectedModelCoordinated?.width*ratio + 'px',
                          top: selectedModelCoordinated?.top + 'px',
                          left: selectedModelCoordinated?.left + 'px',
                        }">
@@ -77,6 +77,7 @@ export default {
   data() {
     return {
       resizeObserver: null,
+      ratio: 1,
     };
   },
 
@@ -208,12 +209,13 @@ export default {
       this.ifSideMode();
     },
     selectedModelColorUrl(url) {
-      this.ctx.canvas.setHeight(this.selectedModelCoordinated.height);
-      this.ctx.canvas.setWidth(this.selectedModelCoordinated.width);
+      this.ratio = this.ifSideMode() ? 4 : 1;
+      this.ctx.canvas.setHeight(this.selectedModelCoordinated.height * this.ratio);
+      this.ctx.canvas.setWidth(this.selectedModelCoordinated.width * this.ratio);
       this.ctx.canvas.renderAll();
 
-      this.ctx.canvas2.setHeight(this.selectedModelCoordinated.height);
-      this.ctx.canvas2.setWidth(this.selectedModelCoordinated.width);
+      this.ctx.canvas2.setHeight(this.selectedModelCoordinated.height * this.ratio);
+      this.ctx.canvas2.setWidth(this.selectedModelCoordinated.width * this.ratio);
       this.ctx.canvas2.renderAll();
     },
   },
@@ -319,8 +321,8 @@ export default {
       position: absolute;
 
       &.lrSide {
-        transform-origin: 0 100%;
-        transform: scale(4, 4);
+        transform-origin: top left;
+        transform: scale(0.25, 0.25);
       }
     }
   }
