@@ -1,16 +1,16 @@
 <template>
   <q-tabs
-    v-model="tab"
-    inline-label
-    dense
-    class="text-grey"
-    active-color="primary"
-    indicator-color="primary"
-    align="justify"
+      v-model="tab"
+      inline-label
+      dense
+      class="text-grey"
+      active-color="primary"
+      indicator-color="primary"
+      align="justify"
   >
-    <q-tab no-caps name="product" icon="invert_colors" :label="$t('label.product')" />
-    <q-tab no-caps name="layers" icon="layers" :label="$t('label.layers')" />
-    <q-tab no-caps name="object" icon="tune" :label="$t('label.object')" />
+    <q-tab no-caps name="product" icon="invert_colors" :label="$t('label.product')"/>
+    <q-tab no-caps name="layers" icon="layers" :label="$t('label.layers')"/>
+    <q-tab no-caps name="object" icon="tune" :label="$t('label.object')"/>
     <q-tab class="no-padding-tab" clickable="false">
       <q-btn
           no-caps
@@ -21,33 +21,34 @@
             :src="svgPath"
             alt="Custom Icon"
             style="width: 20px; height: 20px; margin-right: 8px;"/>
-        <span>{{ifCanvasEditMode() ? 'Update' : 'Add to Card'}}</span>
+        <span>{{ ifCanvasEditMode() ? 'Update' : 'Add to Card' }}</span>
       </q-btn>
     </q-tab>
   </q-tabs>
 
   <q-tab-panels v-model="tab" animated>
     <q-tab-panel name="layers" class="q-px-none">
-      <LayersList />
+      <LayersList/>
     </q-tab-panel>
     <q-tab-panel name="product" class="q-px-none">
-      <SelectedModel />
+      <SelectedModel/>
     </q-tab-panel>
     <q-tab-panel name="object" class="q-px-none">
-      <ObjectDetails />
+      <ObjectDetails/>
     </q-tab-panel>
   </q-tab-panels>
 </template>
 
 <script>
-import { mapState } from "vuex";
-import { mapMutations } from "vuex";
+import {mapState} from "vuex";
+import {mapMutations} from "vuex";
 
 import SelectedModel from "@/components/Controls/SelectedModel";
 import ObjectDetails from "@/components/Controls/Details";
 import LayersList from "@/components/Layers/List.vue";
 import CanvasService, {Context} from "@/services/canvas";
 import html2canvas from "html2canvas";
+import {jsPDF} from "jspdf";
 import OrderService from "@/services/order";
 
 export default {
@@ -84,6 +85,7 @@ export default {
     ...mapMutations("app", ["setControlTab"]),
     ...mapMutations("canvas", [
       "resetSelectedLayer",
+      "setMode",
     ]),
     canOrder() {
       return this.layers.length > 0;
@@ -95,32 +97,55 @@ export default {
 
     async createOrder() {
       this.loading = true;
+      const sides = Object.keys(this.selectedModelColor).filter(key =>
+          ['front', 'back', 'left_side', 'right_side'].includes(key)
+      );
+      const canvasFiles = [];
       const url = new URL(window.location.href);
       const product_id = url.searchParams.get('product_id');
       const project_id = url.searchParams.get('project_id');
-      this.resetSelectedLayer();
 
       try {
-        let active = Context.canvas.getActiveObject();
+        for (const side of sides) {
+          // Switch to the current side
+          await this.setMode(side);         // Ensure this is an async method if loading requires time
+          await this.$nextTick();           // Wait for DOM updates
+          await new Promise(resolve => setTimeout(resolve, 500)); // Small delay to ensure full render
 
-        if (active) {
-          Context.canvas.discardActiveObject();
-          Context.canvas.renderAll();
+          // Capture the screenshot
+          const element = document.getElementById("canvas-custom");
+          const canvas = await html2canvas(element, {useCORS: true});
+          const screenshot = canvas.toDataURL("image/png");
+          const id = this.selectedModelColor[side]?.id;
+
+          // const elementCanvas = document.getElementById("canvas-block");
+          // const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
+          // const scaleFactor = 1;
+          // const dataURL = canvasBlock.toDataURL({
+          //   format: 'png',
+          //   multiplier: scaleFactor
+          // });
+          //
+          // const img = new Image();
+          // img.src = dataURL;
+          // img.onload = function () {
+          //   const pdf = new jsPDF({
+          //     orientation: 'portrait',
+          //     unit: 'px',
+          //     format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
+          //   });
+          //     pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
+          //     const pdfTest = pdf.output('blob');
+          //     pdf.save("test.pdf");
+          // }
+
+          canvasFiles.push({id, side, screenshot});
         }
-
-        const element = document.getElementById("canvas-custom");
-        const canvas = await html2canvas(element, {useCORS: true});
-        const screenShot = canvas.toDataURL("image/png");
-
-        // const downloadLink = document.createElement('a');
-        // downloadLink.href = screenShot;  // Set the href to the screenshot data URL
-        // downloadLink.download = `order_screenshot_${Date.now()}.png`;  // Set the filename
-        // downloadLink.click();
 
         // Wait for the order to be created
         const order = await OrderService.create({
           title: "Order №" + Date.now(),
-          screenShot: screenShot,
+          files: canvasFiles,
           productId: product_id,
           projectId: project_id,
           json: JSON.stringify({
@@ -147,6 +172,6 @@ export default {
 
 <style lang="scss">
 .no-padding-tab {
-  padding: 0!important;
+  padding: 0 !important;
 }
 </style>

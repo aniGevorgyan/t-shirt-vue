@@ -9,7 +9,7 @@
               <div class="flex flex-center sm-overflow-scroll" id="canvas-custom">
                 <div class="canvas-wrapper"
                      v-bind:style="{ backgroundImage: selectedModelColorUrl ? `url('${selectedModelColorUrl}')` : null }">
-                  <div class="canvas-block" :class="{ lrSide: ifSideMode() }" :style="
+                  <div id="canvas-block" class="canvas-block" :class="{ lrSide: ifSideMode() }" :style="
                        {
                          height: selectedModelCoordinated?.height + 'px',
                          width: selectedModelCoordinated?.width + 'px',
@@ -91,9 +91,12 @@ export default {
     this.ctx.canvas = new fabric.Canvas(ref, {
       selection: false,
       allowTouchScrolling: true,
+      contextOptions: { willReadFrequently: true }
     });
 
-    this.ctx.canvas2 = new fabric.Canvas(ref2);
+    this.ctx.canvas2 = new fabric.Canvas(ref2, {
+      contextOptions: { willReadFrequently: true }
+    });
 
     this.ctx.canvas.on("before:selection:cleared", () => {
       this.resetSelectedLayer();
