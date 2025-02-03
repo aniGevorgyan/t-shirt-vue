@@ -106,6 +106,13 @@ export default {
       const project_id = url.searchParams.get('project_id');
 
       try {
+        let active = Context.canvas.getActiveObject();
+
+        if (active) {
+          Context.canvas.discardActiveObject();
+          Context.canvas.renderAll();
+        }
+
         for (const side of sides) {
           // Switch to the current side
           await this.setMode(side);         // Ensure this is an async method if loading requires time
@@ -118,26 +125,26 @@ export default {
           const screenshot = canvas.toDataURL("image/png");
           const id = this.selectedModelColor[side]?.id;
 
-          // const elementCanvas = document.getElementById("canvas-block");
-          // const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
-          // const scaleFactor = 1;
-          // const dataURL = canvasBlock.toDataURL({
-          //   format: 'png',
-          //   multiplier: scaleFactor
-          // });
-          //
-          // const img = new Image();
-          // img.src = dataURL;
-          // img.onload = function () {
-          //   const pdf = new jsPDF({
-          //     orientation: 'portrait',
-          //     unit: 'px',
-          //     format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
-          //   });
-          //     pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
-          //     const pdfTest = pdf.output('blob');
-          //     pdf.save("test.pdf");
-          // }
+          const elementCanvas = document.getElementById("canvas-block");
+          const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
+          const scaleFactor = 1;
+          const dataURL = canvasBlock.toDataURL({
+            format: 'png',
+            multiplier: scaleFactor
+          });
+
+          const img = new Image();
+          img.src = dataURL;
+          img.onload = function () {
+            const pdf = new jsPDF({
+              orientation: 'portrait',
+              unit: 'px',
+              format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
+            });
+              pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
+              const pdfTest = pdf.output('blob');
+              pdf.save("test.pdf");
+          }
 
           canvasFiles.push({id, side, screenshot});
         }
