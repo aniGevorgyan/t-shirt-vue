@@ -16,7 +16,7 @@
           no-caps
           color="primary"
           @click.stop.prevent="createOrder"
-          :disabled="!canOrder() || loading">
+          :disabled="!canOrder()">
         <q-img
             :src="svgPath"
             alt="Custom Icon"
@@ -37,6 +37,7 @@
       <ObjectDetails/>
     </q-tab-panel>
   </q-tab-panels>
+  <div v-if="loading" id="ec-overlay"><span class="loader_img"></span></div>
 </template>
 
 <script>
@@ -126,10 +127,16 @@ export default {
           const screenshot = canvas.toDataURL("image/png");
           const id = this.selectedModelColor[side]?.id;
 
+          const scaleFactor = 5;
           const elementCanvas = document.getElementById("canvas-block");
           elementCanvas.style.backgroundColor = "transparent";
+          elementCanvas.style.height = Context.canvas.height * scaleFactor + "px";
+          elementCanvas.style.width = Context.canvas.width * scaleFactor + "px";
+          Context.canvas.setHeight(Context.canvas.height * scaleFactor);
+          Context.canvas.setWidth(Context.canvas.width * scaleFactor);
+          Context.canvas.setZoom(scaleFactor);
+          Context.canvas.renderAll();
           const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
-          const scaleFactor = 1;
           const dataURL = canvasBlock.toDataURL({
             format: 'png',
             multiplier: scaleFactor
@@ -180,6 +187,9 @@ export default {
 </script>
 
 <style lang="scss">
+#ec-overlay{display:block;width:100%;height:100%;position:fixed;top:0;right:0;left:0;bottom:0;background:#fff;z-index:999999999999}
+#ec-overlay .loader_img{display:block;width:100%;height:100%;position:fixed;top:0;right:0;left:0;bottom:0;z-index:999999999999;background:#fff url('../../assets/loader.gif') no-repeat scroll 50% 50%;pointer-events:none;overflow:hidden;background-size:65px}
+
 .no-padding-tab {
   padding: 0 !important;
 }
