@@ -118,9 +118,9 @@ export default {
         let index = 0;
         for (const side of sides) {
           // Switch to the current side
-          await this.setMode(side);         // Ensure this is an async method if loading requires time
-          await this.$nextTick();           // Wait for DOM updates
-          await new Promise(resolve => setTimeout(resolve, 500)); // Small delay to ensure full render
+          this.setMode(side);
+          await this.$nextTick();
+          await new Promise(resolve => setTimeout(resolve, 500));
 
           // Capture the screenshot
           const element = document.getElementById("canvas-custom");
@@ -128,39 +128,12 @@ export default {
           const screenshot = canvas.toDataURL("image/png");
           const id = this.selectedModelColor[side]?.id;
 
-          const scaleFactor = 5;
-          const elementCanvas = document.getElementById("canvas-block");
-          elementCanvas.style.backgroundColor = "transparent";
-          elementCanvas.style.height = Context.canvas.height * scaleFactor + "px";
-          elementCanvas.style.width = Context.canvas.width * scaleFactor + "px";
-          Context.canvas.setHeight(Context.canvas.height * scaleFactor);
-          Context.canvas.setWidth(Context.canvas.width * scaleFactor);
-          Context.canvas.setZoom(scaleFactor);
-          Context.canvas.renderAll();
-          const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
-          const dataURL = canvasBlock.toDataURL({
-            format: 'png',
-            multiplier: scaleFactor
-          });
-
-          const img = new Image();
-          img.src = dataURL;
-          img.onload = async function () {
-            const pdf = new jsPDF({
-              orientation: 'landscape',
-              unit: 'px',
-              format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
-            });
-
-            pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
-            const pdfBlob = pdf.output('blob');
-            await MediaService.uploadBlob(pdfBlob, side, project_id);
-          }
           canvasFiles.push({id, side, screenshot});
           index++;
         }
 
         if (index === sides.length) {
+          await this.generatePDFS(project_id);
           // Wait for the order to be created
           const order = await OrderService.create({
             title: "Order №" + Date.now(),
@@ -183,6 +156,46 @@ export default {
       } catch (error) {
         // this.loading = false;
         console.error("Error capturing screenshot or creating order:", error);
+      }
+    },
+
+    async generatePDFS(project_id) {
+      const sides = Object.keys(this.selectedModelColor).filter(key =>
+          ['front', 'back', 'left_side', 'right_side'].includes(key)
+      );
+      const scaleFactor = 5;
+      const elementCanvas = document.getElementById("canvas-block");
+      for (const side of sides) {
+        this.setMode(side);
+        await this.$nextTick();
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        elementCanvas.style.backgroundColor = "transparent";
+        elementCanvas.style.height = Context.canvas.height * scaleFactor + "px";
+        elementCanvas.style.width = Context.canvas.width * scaleFactor + "px";
+        Context.canvas.setHeight(Context.canvas.height * scaleFactor);
+        Context.canvas.setWidth(Context.canvas.width * scaleFactor);
+        Context.canvas.setZoom(scaleFactor);
+        Context.canvas.renderAll();
+        const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
+        const dataURL = canvasBlock.toDataURL({
+          format: 'png',
+          multiplier: scaleFactor
+        });
+
+        const img = new Image();
+        img.src = dataURL;
+        img.onload = function () {
+          const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'px',
+            format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
+          });
+
+          pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
+          const pdfBlob = pdf.output('blob');
+          MediaService.uploadBlob(pdfBlob, side, project_id);
+        }
       }
     }
 
