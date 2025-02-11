@@ -50,6 +50,7 @@ import CanvasService, {Context} from "@/services/canvas";
 import html2canvas from "html2canvas";
 import {jsPDF} from "jspdf";
 import OrderService from "@/services/order";
+import MediaService from "@/services/media";
 
 export default {
   name: "ControlsPanel",
@@ -125,27 +126,27 @@ export default {
           const screenshot = canvas.toDataURL("image/png");
           const id = this.selectedModelColor[side]?.id;
 
-          // const elementCanvas = document.getElementById("canvas-block");
-          // const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
-          // const scaleFactor = 1;
-          // const dataURL = canvasBlock.toDataURL({
-          //   format: 'png',
-          //   multiplier: scaleFactor
-          // });
-          //
-          // const img = new Image();
-          // img.src = dataURL;
-          // img.onload = function () {
-          //   const pdf = new jsPDF({
-          //     orientation: 'portrait',
-          //     unit: 'px',
-          //     format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
-          //   });
-          //     pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
-          //     const pdfTest = pdf.output('blob');
-          //     pdf.save("test.pdf");
-          // }
+          const elementCanvas = document.getElementById("canvas-block");
+          const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
+          const scaleFactor = 1;
+          const dataURL = canvasBlock.toDataURL({
+            format: 'png',
+            multiplier: scaleFactor
+          });
 
+          const img = new Image();
+          img.src = dataURL;
+          img.onload = async function () {
+            const pdf = new jsPDF({
+              orientation: 'landscape',
+              unit: 'px',
+              format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
+            });
+
+            pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
+            const pdfBlob = pdf.output('blob');
+            await MediaService.uploadBlob(pdfBlob, side, project_id);
+          }
           canvasFiles.push({id, side, screenshot});
         }
 

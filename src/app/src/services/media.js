@@ -13,15 +13,16 @@ const MediaService = {
     }
   },
 
-  async uploadBlob(blob) {
+  async uploadBlob(blob, side, project_id) {
     try {
       let data = new FormData();
-      data.append("file", blob, "capture.png");
+      data.append("file", blob, side + ".pdf");
+      data.append("project_id", project_id);
 
-      let result = await axios.post("media", data, {
+      let result = await axios.post("https://demo.yansprint.com/api/save-pdf", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      return result.data.doc;
+      return result.data?.file_path;
     } catch (e) {
       Notify.create({ type: "error", message: t("text.error.cantUploadFile") });
       return false;
