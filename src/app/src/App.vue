@@ -314,6 +314,7 @@ export default {
 <style lang="scss">
 
 .main-content {
+  overflow: hidden;
   justify-content: center;
 }
 

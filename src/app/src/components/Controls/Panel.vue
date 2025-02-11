@@ -115,6 +115,7 @@ export default {
           Context.canvas.renderAll();
         }
 
+        let index = 0;
         for (const side of sides) {
           // Switch to the current side
           await this.setMode(side);         // Ensure this is an async method if loading requires time
@@ -156,28 +157,31 @@ export default {
             await MediaService.uploadBlob(pdfBlob, side, project_id);
           }
           canvasFiles.push({id, side, screenshot});
+          index++;
         }
 
-        // Wait for the order to be created
-        const order = await OrderService.create({
-          title: "Order №" + Date.now(),
-          files: canvasFiles,
-          productId: product_id,
-          projectId: project_id,
-          json: JSON.stringify({
-            model: this.selectedModelColor,
-            canvasData: CanvasService.toJSON(),
-          }),
-        });
+        if (index === sides.length) {
+          // Wait for the order to be created
+          const order = await OrderService.create({
+            title: "Order №" + Date.now(),
+            files: canvasFiles,
+            productId: product_id,
+            projectId: project_id,
+            json: JSON.stringify({
+              model: this.selectedModelColor,
+              canvasData: CanvasService.toJSON(),
+            }),
+          });
 
-        if (order) {
-          window.parent.postMessage({action: 'redirect', data: order}, '*');
-          this.orderModal = false;
-          this.loading = false;
-          this.orderCreatedModal = true;
+          if (order) {
+            window.parent.postMessage({action: 'redirect', data: order}, '*');
+            this.orderModal = false;
+            // this.loading = false;
+            this.orderCreatedModal = true;
+          }
         }
       } catch (error) {
-        this.loading = false;
+        // this.loading = false;
         console.error("Error capturing screenshot or creating order:", error);
       }
     }
@@ -187,8 +191,34 @@ export default {
 </script>
 
 <style lang="scss">
-#ec-overlay{display:block;width:100%;height:100%;position:fixed;top:0;right:0;left:0;bottom:0;background:#fff;z-index:999999999999}
-#ec-overlay .loader_img{display:block;width:100%;height:100%;position:fixed;top:0;right:0;left:0;bottom:0;z-index:999999999999;background:#fff url('../../assets/loader.gif') no-repeat scroll 50% 50%;pointer-events:none;overflow:hidden;background-size:65px}
+#ec-overlay {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: #fff;
+  z-index: 999999999999
+}
+
+#ec-overlay .loader_img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 999999999999;
+  background: #fff url('../../assets/loader.gif') no-repeat scroll 50% 50%;
+  pointer-events: none;
+  overflow: hidden;
+  background-size: 65px
+}
 
 .no-padding-tab {
   padding: 0 !important;
