@@ -127,6 +127,7 @@ export default {
           const id = this.selectedModelColor[side]?.id;
 
           const elementCanvas = document.getElementById("canvas-block");
+          elementCanvas.style.backgroundColor = "transparent";
           const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
           const scaleFactor = 1;
           const dataURL = canvasBlock.toDataURL({

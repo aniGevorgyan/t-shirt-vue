@@ -56,7 +56,7 @@ class CanvasService {
         this.cleanup();
         this.timeoutId = setTimeout(() => {
             Context.canvas.renderAll();
-        }, 100);
+        }, 200);
     }
 
     static addImageLayer(url) {
@@ -98,7 +98,7 @@ class CanvasService {
                 this.cleanup();
                 this.timeoutId = setTimeout(() => {
                     Context.canvas.renderAll();
-                }, 100);
+                }, 200);
             },
             {
                 crossOrigin: "anonymous",

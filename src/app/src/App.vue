@@ -92,11 +92,11 @@ export default {
     this.ctx.canvas = new fabric.Canvas(ref, {
       selection: false,
       allowTouchScrolling: true,
-      contextOptions: { willReadFrequently: true }
+      contextOptions: {willReadFrequently: true}
     });
 
     this.ctx.canvas2 = new fabric.Canvas(ref2, {
-      contextOptions: { willReadFrequently: true }
+      contextOptions: {willReadFrequently: true}
     });
 
     this.ctx.canvas.on("before:selection:cleared", () => {
@@ -122,23 +122,45 @@ export default {
       this.syncToCanvas2();
     });
 
-
     this.ctx.canvas.on("object:moving", (event) => {
       let obj = event.target;
       // if object is too big ignore
-      if(obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width){
+      if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
         return;
       }
       obj.setCoords();
       // top-left  corner
-      if(obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0){
-        obj.top = Math.max(obj.top, obj.top-obj.getBoundingRect().top);
-        obj.left = Math.max(obj.left, obj.left-obj.getBoundingRect().left);
+      if (obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0) {
+        obj.top = Math.max(obj.top, obj.top - obj.getBoundingRect().top);
+        obj.left = Math.max(obj.left, obj.left - obj.getBoundingRect().left);
       }
       // bot-right corner
-      if(obj.getBoundingRect().top+obj.getBoundingRect().height  > obj.canvas.height || obj.getBoundingRect().left+obj.getBoundingRect().width  > obj.canvas.width){
-        obj.top = Math.min(obj.top, obj.canvas.height-obj.getBoundingRect().height+obj.top-obj.getBoundingRect().top);
-        obj.left = Math.min(obj.left, obj.canvas.width-obj.getBoundingRect().width+obj.left-obj.getBoundingRect().left);
+      if (obj.getBoundingRect().top + obj.getBoundingRect().height > obj.canvas.height || obj.getBoundingRect().left + obj.getBoundingRect().width > obj.canvas.width) {
+        obj.top = Math.min(obj.top, obj.canvas.height - obj.getBoundingRect().height + obj.top - obj.getBoundingRect().top);
+        obj.left = Math.min(obj.left, obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left);
+      }
+    });
+
+    this.ctx.canvas.on("object:scaling", (event) => {
+      let obj = event.target;
+
+      obj.setCoords();
+      let brNew = obj.getBoundingRect();
+
+      if (((brNew.width + brNew.left) >= obj.canvas.width) || ((brNew.height + brNew.top) >= obj.canvas.height) || ((brNew.left < 0) || (brNew.top < 0))) {
+        obj.left = this.left1;
+        obj.top = this.top1;
+        obj.scaleX = this.scale1x;
+        obj.scaleY = this.scale1y;
+        obj.width = this.width1;
+        obj.height = this.height1;
+      } else {
+        this.left1 = obj.left;
+        this.top1 = obj.top;
+        this.scale1x = obj.scaleX;
+        this.scale1y = obj.scaleY;
+        this.width1 = obj.width;
+        this.height1 = obj.height;
       }
     });
 
@@ -243,7 +265,7 @@ export default {
     },
 
     handleHeight(height) {
-      window.parent.postMessage({ action: 'resize', iframeHeight: height }, '*')
+      window.parent.postMessage({action: 'resize', iframeHeight: height}, '*')
     },
 
     ifSideMode() {
@@ -294,6 +316,7 @@ export default {
 .main-content {
   justify-content: center;
 }
+
 .canvas-designer {
   //box-shadow: 0 0 5px #d9d9d9;
   position: sticky;
@@ -336,7 +359,7 @@ export default {
   }
 }
 
-.control-panel  {
+.control-panel {
   width: calc(100% - 700px);
   max-width: 500px;
   min-height: 725px;
