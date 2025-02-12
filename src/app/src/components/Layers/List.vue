@@ -37,7 +37,21 @@
     <LoadingItem v-if="loadingLayer" />
     <q-separator v-show="layers.length" />
   </q-list>
+
+  <q-dialog v-model="dialog" persistent>
+    <q-card>
+      <q-card-section>
+        <q-toggle v-model="switchValue" label="Remove background" />
+      </q-card-section>
+
+      <q-card-actions class="justify-center">
+        <q-btn no-caps outline label="Cancel" text-color="primary" @click="dialog = false" />
+        <q-btn no-caps label="Confirm" color="primary" @click="confirmAction" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
+
 
 <script>
 import { mapState } from "vuex";
@@ -60,6 +74,9 @@ export default {
   data: () => ({
     tab: "layers",
     loadingLayer: false,
+    dialog: false,
+    switchValue: false,
+    file: '',
     textSvgPath: require('@/assets/text.svg'),
     imagesSvgPath: require('@/assets/images.svg'),
   }),
@@ -79,31 +96,34 @@ export default {
       CanvasService.addImageLayer(url);
     },
 
-    async uploadImage(e) {
-      let file = e.target.files[0];
+    async confirmAction() {
+      this.loadingLayer = true;
+      this.dialog = false;
 
-      if (!file) {
+      const url = new URL(window.location.href);
+      const project_id = url.searchParams.get('project_id');
+      const with_background = this.switchValue;
+      let image = await MediaService.upload(this.file, project_id, with_background);
+      if (image) {
+        this.addImageLayer(image.url);
+      // this.pushUploadedImage({
+      //   id: Date.now(),
+      //   url: image.url,
+      // });
+      }
+      this.loadingLayer = false;
+      this.switchValue = false;
+
+    },
+
+    uploadImage(e) {
+      this.file = e.target.files[0];
+
+      if (!this.file) {
         return;
       }
 
-      this.loadingLayer = true;
-
-      let data = new FormData();
-      const url = new URL(window.location.href);
-      const project_id = url.searchParams.get('project_id');
-
-      data.append('project_id', project_id);
-      data.append("file_preview", file);
-
-      let image = await MediaService.upload(data);
-      if (image) {
-        this.addImageLayer(image.url);
-        this.pushUploadedImage({
-          id: Date.now(),
-          url: image.url,
-        });
-      }
-      this.loadingLayer = false;
+      this.dialog = true;
     },
   },
 };

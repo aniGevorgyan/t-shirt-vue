@@ -61,8 +61,6 @@ import WebFontConfig from "@/WebFontConfig";
 import ModeSelector from "@/components/Controls/ModeSelector";
 import ControlsPanel from "@/components/Controls/Panel";
 
-import InitModal from "@/components/Modals/Init";
-
 export default {
   name: "LayoutDefault",
 
@@ -71,7 +69,6 @@ export default {
   components: {
     ControlsPanel,
     ModeSelector,
-    InitModal,
   },
 
   data() {
@@ -143,6 +140,19 @@ export default {
 
     this.ctx.canvas.on("object:scaling", (event) => {
       let obj = event.target;
+      obj.lockScalingFlip = true;
+      let minSize = 10;
+
+      if (obj.type === 'image') {
+        minSize = 30;
+      }
+
+      if (obj.width * obj.scaleX < minSize) {
+        obj.scaleX = minSize / obj.width;
+      }
+      if (obj.height * obj.scaleY < minSize) {
+        obj.scaleY = minSize / obj.height;
+      }
 
       obj.setCoords();
       let brNew = obj.getBoundingRect();

@@ -3,8 +3,12 @@ import { Notify } from "quasar";
 import { t } from "../locales";
 
 const MediaService = {
-  async upload(data) {
+  async upload(file, project_id, with_background) {
     try {
+      let data = new FormData();
+      data.append('project_id', project_id);
+      data.append('file_preview', file);
+      data.append('with_background', with_background);
       let result = await axios.post("https://demo.yansprint.com/api/file-preview", data);
       return result.data;
     } catch (e) {
