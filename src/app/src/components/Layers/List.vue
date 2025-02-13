@@ -102,8 +102,8 @@ export default {
 
       const url = new URL(window.location.href);
       const project_id = url.searchParams.get('project_id');
-      const with_background = this.switchValue;
-      let image = await MediaService.upload(this.file, project_id, with_background);
+      const remove_background = this.switchValue;
+      let image = await MediaService.upload(this.file, project_id, remove_background);
       if (image) {
         this.addImageLayer(image.url);
       // this.pushUploadedImage({

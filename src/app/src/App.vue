@@ -18,7 +18,7 @@
                          left: (ifSideMode() ? 0 : selectedModelCoordinated?.left) + 'px',
                          backgroundColor: ifSideMode() ? selectedModelColor?.hex : null,
                        }">
-                    <canvas ref="canvas"></canvas>
+                    <canvas ref="canvas" :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066'} : {}"></canvas>
 <!--                        :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066'} : {}"-->
                   </div>
                   <div class="canvas-block-2" :class="{ lrSide: ifSideMode() }" :style="
@@ -121,24 +121,26 @@ export default {
 
     this.ctx.canvas.on("object:moving", (event) => {
       let obj = event.target;
+      let margin = 10;
       // if object is too big ignore
       if (obj.currentHeight > obj.canvas.height || obj.currentWidth > obj.canvas.width) {
         return;
       }
       obj.setCoords();
       // top-left  corner
-      if (obj.getBoundingRect().top < 0 || obj.getBoundingRect().left < 0) {
-        obj.top = Math.max(obj.top, obj.top - obj.getBoundingRect().top);
-        obj.left = Math.max(obj.left, obj.left - obj.getBoundingRect().left);
+      if (obj.getBoundingRect().top < margin || obj.getBoundingRect().left < margin) {
+        obj.top = Math.max(obj.top, obj.top - obj.getBoundingRect().top + margin);
+        obj.left = Math.max(obj.left, obj.left - obj.getBoundingRect().left + margin);
       }
       // bot-right corner
-      if (obj.getBoundingRect().top + obj.getBoundingRect().height > obj.canvas.height || obj.getBoundingRect().left + obj.getBoundingRect().width > obj.canvas.width) {
-        obj.top = Math.min(obj.top, obj.canvas.height - obj.getBoundingRect().height + obj.top - obj.getBoundingRect().top);
-        obj.left = Math.min(obj.left, obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left);
+      if (obj.getBoundingRect().top + obj.getBoundingRect().height + margin > obj.canvas.height || obj.getBoundingRect().left + obj.getBoundingRect().width + margin > obj.canvas.width) {
+        obj.top = Math.min(obj.top, (obj.canvas.height - obj.getBoundingRect().height + obj.top - obj.getBoundingRect().top) -margin );
+        obj.left = Math.min(obj.left, (obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left) - margin);
       }
     });
 
     this.ctx.canvas.on("object:scaling", (event) => {
+      let margin = 10;
       let obj = event.target;
       obj.lockScalingFlip = true;
       let minSize = 10;
@@ -157,7 +159,12 @@ export default {
       obj.setCoords();
       let brNew = obj.getBoundingRect();
 
-      if (((brNew.width + brNew.left) >= obj.canvas.width) || ((brNew.height + brNew.top) >= obj.canvas.height) || ((brNew.left < 0) || (brNew.top < 0))) {
+      if (
+          (brNew.left < margin) ||
+          (brNew.top < margin) ||
+          (brNew.left + brNew.width > obj.canvas.width - margin) ||
+          (brNew.top + brNew.height > obj.canvas.height - margin)
+      ) {
         obj.left = this.left1;
         obj.top = this.top1;
         obj.scaleX = this.scale1x;
