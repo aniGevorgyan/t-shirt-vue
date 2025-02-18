@@ -80,17 +80,18 @@ class CanvasService {
                         mr: false,
                         tr: false,
                     },
+                    originX: "center",
+                    originY: "center",
                 });
+
                 this.customizeResizeControl();
                 this.customizeRotateControl(Context.canvas);
                 this.customizeDeleteControl(Context.canvas);
 
-                var imageWidth = Context.canvas.getWidth() * 0.5;
+                var imageWidth = Context.canvas.getWidth() * 0.9;
                 imageLayer.scaleToWidth(imageWidth);
                 Context.canvas.add(imageLayer);
                 Context.canvas.centerObject(imageLayer);
-                imageLayer.originX = "center";
-                imageLayer.originY = "center";
                 imageLayer.left = Context.canvas.getWidth() / 2;
                 imageLayer.top = Context.canvas.getHeight() / 2;
                 imageLayer.setCoords();

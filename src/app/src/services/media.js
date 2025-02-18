@@ -17,6 +17,20 @@ const MediaService = {
     }
   },
 
+  async update(file, project_id, remove_background) {
+    try {
+      let data = new FormData();
+      data.append('project_id', project_id);
+      data.append('file_preview', file);
+      data.append('remove_background', remove_background);
+      let result = await axios.put("https://demo.yansprint.com/api/file-preview", data);
+      return result.data;
+    } catch (e) {
+      Notify.create({ type: "error", message: t("text.error.cantUploadFile") });
+      return false;
+    }
+  },
+
   async uploadBlob(blob, side, project_id) {
     try {
       let data = new FormData();

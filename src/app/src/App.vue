@@ -137,6 +137,7 @@ export default {
         obj.top = Math.min(obj.top, (obj.canvas.height - obj.getBoundingRect().height + obj.top - obj.getBoundingRect().top) -margin );
         obj.left = Math.min(obj.left, (obj.canvas.width - obj.getBoundingRect().width + obj.left - obj.getBoundingRect().left) - margin);
       }
+      this.ctx.canvas.renderAll();
     });
 
     this.ctx.canvas.on("object:scaling", (event) => {
@@ -179,6 +180,7 @@ export default {
         this.width1 = obj.width;
         this.height1 = obj.height;
       }
+      this.ctx.canvas.renderAll();
     });
 
     this.ctx.canvas.on({
