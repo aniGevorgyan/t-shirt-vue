@@ -92,23 +92,25 @@
         <div class="text-h6 text-bold">Remove Background (Optional)</div>
       </q-card-section>
 
-      <q-card-section class="q-pt-none">
-        <q-banner dense class="text-red q-pa-none">
-          <q-icon name="warning"/>
-          Image resolution may be too low.
-        </q-banner>
-      </q-card-section>
+<!--      <q-card-section class="q-pt-none">-->
+<!--        <q-banner dense class="text-red q-pa-none">-->
+<!--          <q-icon name="warning"/>-->
+<!--          Image resolution may be too low.-->
+<!--        </q-banner>-->
+<!--      </q-card-section>-->
 
       <q-card-section class="row items-center">
         <div class="col-auto">
-          <q-img :src="imgUrl" style="width: 150px; height: 150px;" contain/>
+          <q-img :src="imgUrl" style="width: 150px; height: 150px;" fit="contain"/>
         </div>
         <div class="col q-ml-md">
           <p class="text-body2 q-mb-sm">
             Remove a background from your image. To see how your upload looks with and without the background, use the
             toggle switch below.
           </p>
-          <q-toggle class="q-mb-sm" v-model="switchValue" label="Remove background (Off)"/>
+          <q-toggle class="q-mb-sm" v-model="switchValue">
+            Remove background ({{switchValue ? 'On' : 'Off'}})
+          </q-toggle>
 
           <q-btn color="green" label="PLACE IMAGE ON PRODUCT" class="full-width" @click="confirmAction(true)"/>
         </div>
@@ -194,7 +196,7 @@ export default {
       const url = new URL(window.location.href);
       const project_id = url.searchParams.get('project_id');
       const remove_background = this.switchValue;
-      let image = overRide ? await MediaService.update(this.file, project_id, remove_background) : await MediaService.upload(this.file, project_id, remove_background);
+      let image = overRide ? await MediaService.update(this.imgUrl, project_id, remove_background) : await MediaService.upload(this.file, project_id, remove_background);
       if (image) {
         this.imgUrl = image.url;
         if (overRide) {
