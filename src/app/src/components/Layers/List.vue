@@ -38,7 +38,7 @@
         <div class="text-h6 text-bold">Choose a File to Upload</div>
       </q-card-section>
 
-      <q-card-section class="row items-center q-gutter-sm">
+      <q-card-section class="row items-center q-gutter-sm no-wrap" style="max-width: 100%; overflow: hidden;">
         <q-file
             ref="fileInput"
             v-model="file"
@@ -47,11 +47,12 @@
             dense
             class="col-grow"
             @input="uploadImage"
+            style="min-width: 0; max-width: 70%; overflow: hidden; text-overflow: ellipsis;"
         />
         <q-btn
             label="CHOOSE YOUR FILE"
             color="green"
-            style="height: 40px"
+            style="height: 40px; white-space: nowrap; flex-shrink: 0;"
             :disabled="loadingLayer"
             @click="triggerFileInput">
         </q-btn>
@@ -99,7 +100,7 @@
 <!--        </q-banner>-->
 <!--      </q-card-section>-->
 
-      <q-card-section class="row items-center">
+      <q-card-section class="row items-center img-container">
         <div class="col-auto">
           <q-img :src="imgUrl" style="width: 150px; height: 150px;" fit="contain"/>
         </div>
@@ -239,5 +240,11 @@ export default {
   gap: 20px;
   flex-wrap: wrap;
   width: 300px;
+}
+
+.img-container {
+  @media (max-width: $breakpoint-xs) {
+    flex-direction: column;
+  }
 }
 </style>

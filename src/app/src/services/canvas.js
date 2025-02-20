@@ -88,8 +88,11 @@ class CanvasService {
                 this.customizeRotateControl(Context.canvas);
                 this.customizeDeleteControl(Context.canvas);
 
-                var imageWidth = Context.canvas.getWidth() * 0.9;
-                imageLayer.scaleToWidth(imageWidth);
+                if (imageLayer.height >= imageLayer.width) {
+                    imageLayer.scaleToHeight(Context.canvas.getHeight() * 0.8);
+                } else {
+                    imageLayer.scaleToWidth(Context.canvas.getWidth() * 0.8);
+                }
                 Context.canvas.add(imageLayer);
                 Context.canvas.centerObject(imageLayer);
                 imageLayer.left = Context.canvas.getWidth() / 2;
