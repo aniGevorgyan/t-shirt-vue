@@ -18,7 +18,7 @@
                          left: (ifSideMode() ? 0 : selectedModelCoordinated?.left) + 'px',
                          backgroundColor: ifSideMode() ? selectedModelColor?.hex : null,
                        }">
-                    <canvas ref="canvas" :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066'} : {}"></canvas>
+                    <canvas ref="canvas"></canvas>
 <!--                        :style="selectedLayer.layerId && !ifSideMode() ? {border: '1px solid #e0e0e066'} : {}"-->
                   </div>
                   <div class="canvas-block-2" :class="{ lrSide: ifSideMode() }" :style="

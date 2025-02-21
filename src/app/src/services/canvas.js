@@ -1,6 +1,7 @@
 import {store} from "@/store";
 import {fabric} from "fabric";
 import {cloneProxy} from "../utils";
+import MediaService from "@/services/media";
 
 export const Context = {
     canvas: null,
@@ -173,6 +174,15 @@ class CanvasService {
             cursorStyle: "pointer", // Cursor changes to indicate interaction
             mouseDownHandler: (eventData, transform, x, y) => {
                 const target = transform.target;
+                const url = new URL(window.location.href);
+                const project_id = url.searchParams.get('project_id');
+
+                let data = {
+                    project_id,
+                    file_name: transform.target.src,
+                }
+                MediaService.deleteFile(data);
+
                 if (target) {
                     canvas.remove(target); // Remove the object from the canvas
                     canvas.discardActiveObject();
@@ -269,7 +279,8 @@ class CanvasService {
         ]);
     }
 
-    static loadFromJSON(data, callback = () => {}) {
+    static loadFromJSON(data, callback = () => {
+    }) {
         Context.canvas.loadFromJSON(data, () => {
             Context.canvas.getObjects().forEach((object) => {
                 if (object.type === 'text' || object.type === 'image') {

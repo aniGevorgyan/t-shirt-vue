@@ -32,7 +32,7 @@
     <q-separator v-show="layers.length"/>
   </q-list>
 
-  <q-dialog v-model="dialog" @hide="resetData">
+  <q-dialog v-model="dialog" persistent @hide="resetData">
     <q-card v-if="!imgUrl" style="width: 600px; max-width: 90vw;" class="q-pa-lg">
       <q-card-section>
         <div class="text-h6 text-bold">Choose a File to Upload</div>
@@ -78,9 +78,9 @@
 
       <q-separator/>
 
-      <q-card-section class="row items-center">
-        <q-icon name="phone"/>
-        <div>Need help? Call us at <strong>+1 (888) 886-6860</strong> - 24 Hours Mon-Fri Sat-Sun 8am-5pm PT</div>
+      <q-card-section class="row" style="gap: 10px">
+        <q-icon name="phone" class="q-mt-xs"/>
+        <div>Need help?<br/> Call us at <strong>+1 (888) 886-6860</strong> - 24 Hours Mon-Fri Sat-Sun 8am-5pm PT</div>
       </q-card-section>
 
       <q-card-actions align="right">
@@ -117,12 +117,13 @@
         </div>
       </q-card-section>
 
-      <q-card-section class="text-center">
-        <div>Need help? Call us at <strong>+1 (888) 886-6860</strong> - 24 Hours Mon-Fri Sat-Sun 8am-5pm PT</div>
+      <q-card-section class="row" style="gap: 10px">
+        <q-icon name="phone" class="q-mt-xs"/>
+        <div>Need help?<br/> Call us at <strong>+1 (888) 886-6860</strong> - 24 Hours Mon-Fri Sat-Sun 8am-5pm PT</div>
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn flat label="Close" color="primary" v-close-popup/>
+        <q-btn flat label="Close" color="primary" @click="deleteFile" v-close-popup/>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -197,15 +198,28 @@ export default {
       const url = new URL(window.location.href);
       const project_id = url.searchParams.get('project_id');
       const remove_background = this.switchValue;
+      if (overRide) {
+        this.dialog = false;
+      }
       let image = overRide ? await MediaService.update(this.imgUrl, project_id, remove_background) : await MediaService.upload(this.file, project_id, remove_background);
       if (image) {
         this.imgUrl = image.url;
         if (overRide) {
           this.addImageLayer(image.url);
-          this.dialog = false;
         }
         this.loadingLayer = false;
       }
+    },
+
+    deleteFile() {
+      const url = new URL(window.location.href);
+      const project_id = url.searchParams.get('project_id');
+
+      let data = {
+        project_id,
+        file_name: this.imgUrl,
+      }
+      MediaService.deleteFile(data);
     },
 
     uploadImage(e) {

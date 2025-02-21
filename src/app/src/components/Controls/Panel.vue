@@ -56,8 +56,6 @@ import MediaService from "@/services/media";
 export default {
   name: "ControlsPanel",
   data: () => ({
-    orderModal: false,
-    orderCreatedModal: false,
     loading: false,
     svgPath: require('@/assets/cart.svg'),
   }),
@@ -109,96 +107,98 @@ export default {
 
       try {
         let active = Context.canvas.getActiveObject();
-
         if (active) {
           Context.canvas.discardActiveObject();
           Context.canvas.renderAll();
         }
 
-        let index = 0;
+        // Capture screenshots first
         for (const side of sides) {
-          // Switch to the current side
-          this.setMode(side);
-          await this.$nextTick();
-          await new Promise(resolve => setTimeout(resolve, 500));
-
-          // Capture the screenshot
-          const element = document.getElementById("canvas-custom");
-          const canvas = await html2canvas(element, {useCORS: true});
-          const screenshot = canvas.toDataURL("image/png");
-          const id = this.selectedModelColor[side]?.id;
-
-          canvasFiles.push({id, side, screenshot});
-          index++;
+          await this.captureScreenshot(side, canvasFiles);
         }
 
-        if (index === sides.length) {
-          await this.generatePDFS(project_id);
-          // Wait for the order to be created
-          const order = await OrderService.create({
-            title: "Order №" + Date.now(),
-            files: canvasFiles,
-            productId: product_id,
-            projectId: project_id,
-            json: JSON.stringify({
-              model: this.selectedModelColor,
-              canvasData: CanvasService.toJSON(),
-            }),
-          });
+        // Generate PDFs after screenshots are done
+        for (const side of sides) {
+          await this.generatePDF(side, project_id, canvasFiles);
+        }
 
-          if (order) {
-            window.parent.postMessage({action: 'redirect', data: order}, '*');
-            this.orderModal = false;
-            // this.loading = false;
-            this.orderCreatedModal = true;
-          }
+        const order = await OrderService.create({
+          title: "Order №" + Date.now(),
+          files: canvasFiles,
+          productId: product_id,
+          projectId: project_id,
+          json: JSON.stringify({
+            model: this.selectedModelColor,
+            canvasData: CanvasService.toJSON(),
+          }),
+        });
+
+        if (order) {
+          window.parent.postMessage({ action: 'redirect', data: order }, '*');
         }
       } catch (error) {
-        // this.loading = false;
         console.error("Error capturing screenshot or creating order:", error);
       }
     },
 
-    async generatePDFS(project_id) {
-      const sides = Object.keys(this.selectedModelColor).filter(key =>
-          ['front', 'back', 'left_side', 'right_side'].includes(key)
-      );
+    async captureScreenshot(side, canvasFiles) {
+      this.setMode(side);
+      await this.$nextTick();
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const element = document.getElementById("canvas-custom");
+      const canvas = await html2canvas(element, { useCORS: true });
+      const screenshot = canvas.toDataURL("image/png");
+
+      canvasFiles.push({ id: this.selectedModelColor[side]?.id, side, screenshot });
+    },
+
+    async generatePDF(side, project_id, canvasFiles) {
       const scaleFactor = 5;
+      this.setMode(side);
+      await this.$nextTick();
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       const elementCanvas = document.getElementById("canvas-block");
-      for (const side of sides) {
-        this.setMode(side);
-        await this.$nextTick();
-        await new Promise(resolve => setTimeout(resolve, 500));
+      elementCanvas.style.backgroundColor = "transparent";
+      elementCanvas.style.height = Context.canvas.height * scaleFactor + "px";
+      elementCanvas.style.width = Context.canvas.width * scaleFactor + "px";
 
-        elementCanvas.style.backgroundColor = "transparent";
-        elementCanvas.style.height = Context.canvas.height * scaleFactor + "px";
-        elementCanvas.style.width = Context.canvas.width * scaleFactor + "px";
-        Context.canvas.setHeight(Context.canvas.height * scaleFactor);
-        Context.canvas.setWidth(Context.canvas.width * scaleFactor);
-        Context.canvas.setZoom(scaleFactor);
-        Context.canvas.renderAll();
-        const canvasBlock = await html2canvas(elementCanvas, {useCORS: true});
-        const dataURL = canvasBlock.toDataURL({
-          format: 'png',
-          multiplier: scaleFactor
-        });
+      Context.canvas.setHeight(Context.canvas.height * scaleFactor);
+      Context.canvas.setWidth(Context.canvas.width * scaleFactor);
+      Context.canvas.setZoom(scaleFactor);
+      Context.canvas.renderAll();
 
+      const canvasBlock = await html2canvas(elementCanvas, { useCORS: true });
+      const dataURL = canvasBlock.toDataURL({ format: 'png', multiplier: scaleFactor });
+
+      return new Promise((resolve, reject) => {
         const img = new Image();
         img.src = dataURL;
-        img.onload = function () {
-          const pdf = new jsPDF({
-            orientation: 'landscape',
-            unit: 'px',
-            format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor]
-          });
+        img.onload = async function () {
+          try {
+            const pdf = new jsPDF({
+              orientation: 'landscape',
+              unit: 'px',
+              format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor],
+            });
 
-          pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
-          const pdfBlob = pdf.output('blob');
-          MediaService.uploadBlob(pdfBlob, side, project_id);
-        }
-      }
+            pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
+            const pdfBlob = pdf.output('blob');
+
+            const pdfFileUrl = await MediaService.uploadBlob(pdfBlob, side, project_id);
+
+            // Update the correct entry in canvasFiles
+            const fileEntry = canvasFiles.find(file => file.side === side);
+            fileEntry.file = pdfFileUrl;
+
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        };
+      });
     }
-
   },
 };
 </script>
