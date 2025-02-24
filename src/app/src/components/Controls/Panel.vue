@@ -160,17 +160,24 @@ export default {
       await new Promise(resolve => setTimeout(resolve, 500));
 
       const elementCanvas = document.getElementById("canvas-block");
-      elementCanvas.style.backgroundColor = "transparent";
+      elementCanvas.style.backgroundColor = "transparent"; // Ensure transparent background
       elementCanvas.style.height = Context.canvas.height * scaleFactor + "px";
       elementCanvas.style.width = Context.canvas.width * scaleFactor + "px";
 
+      // Set Fabric.js canvas to be transparent
+      Context.canvas.setBackgroundColor(null, Context.canvas.renderAll.bind(Context.canvas));
       Context.canvas.setHeight(Context.canvas.height * scaleFactor);
       Context.canvas.setWidth(Context.canvas.width * scaleFactor);
       Context.canvas.setZoom(scaleFactor);
       Context.canvas.renderAll();
 
-      const canvasBlock = await html2canvas(elementCanvas, { useCORS: true });
-      const dataURL = canvasBlock.toDataURL({ format: 'png', multiplier: scaleFactor });
+      // Capture with transparent background
+      const canvasBlock = await html2canvas(elementCanvas, {
+        useCORS: true,
+        backgroundColor: null,  // 🚀 Key setting for transparency
+      });
+
+      const dataURL = canvasBlock.toDataURL("image/png", 1.0); // Ensure max quality and transparency
 
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -178,13 +185,14 @@ export default {
         img.onload = async function () {
           try {
             const pdf = new jsPDF({
-              orientation: 'landscape',
-              unit: 'px',
+              orientation: "landscape",
+              unit: "px",
               format: [canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor],
             });
 
-            pdf.addImage(img, 'PNG', 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
-            const pdfBlob = pdf.output('blob');
+            pdf.addImage(img, "PNG", 0, 0, canvasBlock.width * scaleFactor, canvasBlock.height * scaleFactor);
+
+            const pdfBlob = pdf.output("blob");
 
             const pdfFileUrl = await MediaService.uploadBlob(pdfBlob, side, project_id);
 

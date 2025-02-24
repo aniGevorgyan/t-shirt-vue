@@ -51,7 +51,7 @@
         />
         <q-btn
             label="CHOOSE YOUR FILE"
-            color="green"
+            color="primary"
             style="height: 40px; white-space: nowrap; flex-shrink: 0;"
             :disabled="loadingLayer"
             @click="triggerFileInput">
@@ -80,7 +80,7 @@
 
       <q-card-section class="row" style="gap: 10px">
         <q-icon name="phone" class="q-mt-xs"/>
-        <div>Need help?<br/> Call us at <strong>+1 (888) 886-6860</strong> - 24 Hours Mon-Fri Sat-Sun 8am-5pm PT</div>
+        <div>Need help? Call us at <strong>+1 (888) 886-6860</strong></div>
       </q-card-section>
 
       <q-card-actions align="right">
@@ -113,13 +113,13 @@
             Remove background ({{switchValue ? 'On' : 'Off'}})
           </q-toggle>
 
-          <q-btn color="green" label="PLACE IMAGE ON PRODUCT" class="full-width" @click="confirmAction(true)"/>
+          <q-btn color="primary" label="PLACE IMAGE ON PRODUCT" class="full-width" @click="confirmAction(true)"/>
         </div>
       </q-card-section>
 
       <q-card-section class="row" style="gap: 10px">
         <q-icon name="phone" class="q-mt-xs"/>
-        <div>Need help?<br/> Call us at <strong>+1 (888) 886-6860</strong> - 24 Hours Mon-Fri Sat-Sun 8am-5pm PT</div>
+        <div>Need help? Call us at <strong>+1 (888) 886-6860</strong></div>
       </q-card-section>
 
       <q-card-actions align="right">
