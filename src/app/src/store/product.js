@@ -41,20 +41,22 @@ export default {
 
   getters: {
     selectedModelColorUrl(state, getters, rootState) {
-      return state.selectedModelColor
-        ? state.selectedModelColor[rootState.canvas.mode].url
+      let side = state.selectedModelColor?.sides.find(el => el.id == rootState.canvas.mode);
+      return side
+        ? side.url
         : null;
     },
 
     selectedModelCoordinated(state, getters, rootState) {
       const DPI = 96;
-      return state.selectedModelColor
+      let side = state.selectedModelColor?.sides.find(el => el.id == rootState.canvas.mode);
+      return side
           ?
           {
-            top: state.selectedModelColor[rootState.canvas.mode].top * DPI,
-            left: state.selectedModelColor[rootState.canvas.mode].left * DPI,
-            height: state.selectedModelColor[rootState.canvas.mode].height * DPI,
-            width: state.selectedModelColor[rootState.canvas.mode].width * DPI,
+            top: side.top * DPI,
+            left: side.left * DPI,
+            height: side.height * DPI,
+            width: side.width * DPI,
           }
           : null;
     },

@@ -97,9 +97,7 @@ export default {
 
     async createOrder() {
       this.loading = true;
-      const sides = Object.keys(this.selectedModelColor).filter(key =>
-          ['front', 'back', 'left_side', 'right_side'].includes(key)
-      );
+      const sides = this.selectedModelColor.sides.map(el => el.id);
       const canvasFiles = [];
       const url = new URL(window.location.href);
       const product_id = url.searchParams.get('product_id');

@@ -288,7 +288,7 @@ export default {
     },
 
     ifSideMode() {
-      return this.mode === 'left_side' || this.mode === 'right_side';
+      return this.selectedModelColor?.sides.find(el => el.id === this.mode)?.name.includes('Left') || this.selectedModelColor?.sides.find(el => el.id === this.mode)?.name.includes('Right');
     },
 
     syncToCanvas2() {
@@ -310,20 +310,8 @@ export default {
         });
       }
 
-      if (models[0].images[0].front) {
-        return this.setMode('front')
-      }
-
-      if (models[0].images[0].back) {
-        return this.setMode('back')
-      }
-
-      if (models[0].images[0].left_side) {
-        return this.setMode('left_side')
-      }
-
-      if (models[0].images[0].right_side) {
-        return this.setMode('right_side')
+      if(models[0].images[0].sides) {
+        return this.setMode(models[0].images[0].sides[0].id)
       }
     },
   },

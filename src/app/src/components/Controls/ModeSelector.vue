@@ -2,36 +2,13 @@
   <div class="row items-start mode-selector">
     <div v-if="selectedModelColor" class="selectors-wrapper">
       <div
-        v-if="selectedModelColor.front"
-        @click="setMode('front')"
-        :class="{ active: mode == 'front' }"
-        class="selector-item"
-      >
-        <img :src="selectedModelColor.front.url" alt="" />
-      </div>
-      <div
-        v-if="selectedModelColor.back"
-        @click="setMode('back')"
-        :class="{ active: mode == 'back' }"
-        class="selector-item"
-      >
-        <img :src="selectedModelColor.back.url" alt="" />
-      </div>
-      <div
-          v-if="selectedModelColor.left_side"
-          @click="setMode('left_side')"
-          :class="{ active: mode == 'left_side' }"
-          class="selector-item"
-      >
-        <img :src="selectedModelColor.left_side.url" alt="" />
-      </div>
-      <div
-          v-if="selectedModelColor.right_side"
-          @click="setMode('right_side')"
-          :class="{ active: mode == 'right_side' }"
-          class="selector-item"
-      >
-        <img :src="selectedModelColor.right_side.url" alt="" />
+        v-for="side in selectedModelColor.sides"
+        :key="side.id"
+        @click="setMode(side.id)"
+        :class="{ active: mode == side.id }"
+        class="selector-item">
+        <p>{{side.name}}</p>
+<!--        <img :src="side.url" alt="" />-->
       </div>
     </div>
   </div>
@@ -85,6 +62,8 @@ export default {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    width: 60px;
+    height: 60px;
     @media (max-width: $breakpoint-sm) {
       float: left;
       margin-right: 10px;
@@ -94,9 +73,19 @@ export default {
       border-color: $primary;
     }
 
-    img {
-      max-width: 60px;
-      border-radius: inherit;
+    p {
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      font-size: 16px;
+      line-height: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      word-break: break-word;
+      line-break: normal;
     }
   }
 }

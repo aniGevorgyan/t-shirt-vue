@@ -6,24 +6,6 @@ const ProductService = {
   async getModel(product_id, project_id) {
     try {
       let result = await axios.get(`https://demo.yansprint.com/api/product/${product_id}?project_id=${project_id}`);
-      result.data.images.map((el) => {
-        if(el[2]) {
-          el.front = el[2];
-          delete el[2];
-        }
-        if(el[3]) {
-          el.back = el[3];
-          delete el[3];
-        }
-        if(el[4]) {
-          el.left_side = el[4];
-          delete el[4];
-        }
-        if(el[5]) {
-          el.right_side = el[5];
-          delete el[5];
-        }
-      });
       return [result.data];
     } catch (e) {
       return false;
