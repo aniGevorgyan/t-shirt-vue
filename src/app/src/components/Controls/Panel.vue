@@ -148,7 +148,7 @@ export default {
       const canvas = await html2canvas(element, { useCORS: true });
       const screenshot = canvas.toDataURL("image/png");
 
-      canvasFiles.push({ id: this.selectedModelColor[side]?.id, side, screenshot });
+      canvasFiles.push({ id: side, side, screenshot });
     },
 
     async generatePDF(side, project_id, canvasFiles) {
