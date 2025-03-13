@@ -78,7 +78,7 @@ export default {
     },
 
     removeLayer(layer) {
-      if(layer.layerType === 'image') {
+      if (layer.layerType === 'image') {
         const url = new URL(window.location.href);
         const project_id = url.searchParams.get('project_id');
 
