@@ -90,9 +90,9 @@ class CanvasService {
                 this.customizeDeleteControl(Context.canvas);
 
                 if (imageLayer.height >= imageLayer.width) {
-                    imageLayer.scaleToHeight(Context.canvas.getHeight() * 0.8);
+                    imageLayer.scaleToHeight(Context.canvas.getHeight() * 0.6);
                 } else {
-                    imageLayer.scaleToWidth(Context.canvas.getWidth() * 0.8);
+                    imageLayer.scaleToWidth(Context.canvas.getWidth() * 0.6);
                 }
                 Context.canvas.add(imageLayer);
                 Context.canvas.centerObject(imageLayer);
