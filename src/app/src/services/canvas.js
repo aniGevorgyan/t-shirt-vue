@@ -128,7 +128,7 @@ class CanvasService {
             cursorStyle: "nwse-resize",
             actionHandler: fabric.controlsUtils.scalingEqually,
             render: function (ctx, left, top, styleOverride, fabricObject) {
-                const size = 35;
+                const size = 18;
                 ctx.drawImage(customResizeIcon, left - size / 2, top - size / 2, size, size);
             },
         });
@@ -151,7 +151,7 @@ class CanvasService {
             cursorStyle: "pointer",
             actionHandler: fabric.controlsUtils.rotationWithSnapping,
             render: function (ctx, left, top, styleOverride, fabricObject) {
-                const size = 24; // Custom icon size
+                const size = 18; // Custom icon size
                 ctx.drawImage(rotateIcon, left - size / 2, top - size / 2, size, size);
             },
         });
@@ -193,7 +193,7 @@ class CanvasService {
                 return true; // Stop further event handling
             },
             render: function (ctx, left, top, styleOverride, fabricObject) {
-                const iconSize = 24; // Custom icon size
+                const iconSize = 18; // Custom icon size
                 ctx.drawImage(
                     deleteIcon,
                     left - iconSize / 2,
