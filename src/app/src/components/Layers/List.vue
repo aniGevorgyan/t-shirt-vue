@@ -28,11 +28,11 @@
     <template v-for="layer in layers" :key="layer.layerId">
       <LayerItem :layer="layer" v-if="layer.mode == mode"/>
     </template>
+    <LoadingItem v-if="loadingLayer"/>
     <q-separator v-show="layers.length"/>
   </q-list>
 
   <q-dialog v-model="dialog" persistent @hide="resetData">
-
     <q-card v-if="!imgUrl" style="width: 600px; max-width: 90vw;" class="q-pa-lg">
       <q-card-section>
         <div class="text-h6 text-bold">Choose a File to Upload</div>
@@ -75,7 +75,6 @@
           <span>GIF</span>
         </div>
         <LoadingItem v-if="loadingLayer"/>
-
       </q-card-section>
 
       <q-separator/>
