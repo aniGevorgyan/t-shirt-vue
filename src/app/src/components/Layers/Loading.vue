@@ -1,5 +1,5 @@
 <template>
-  <q-item v-ripple>
+  <q-item v-ripple class="justify-center">
     <q-item-section avatar top>
       <q-spinner color="primary" size="2em" />
     </q-item-section>
